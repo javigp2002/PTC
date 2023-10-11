@@ -15,4 +15,4 @@ media_aritmetica = (x1 + x2 + x3) / n
 
 desviacion_tipica = math.sqrt(((x1 - media_aritmetica)**2 + (x2 - media_aritmetica)**2 + (x3 - media_aritmetica)**2) / n)
 
-print("La desviación típica es", desviacion_tipica, sep=" ")
+print("La desviación típica es", round(desviacion_tipica,2), sep=" ")
