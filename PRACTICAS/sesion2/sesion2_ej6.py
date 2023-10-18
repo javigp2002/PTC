@@ -3,9 +3,9 @@
 usar la funcion max y min de python).
 """
 
-x1 = int(input("Introduzca el primer número:"))
-x2 = int(input("Introduzca el segundo número:"))
-x3 = int(input("Introduzca el tercer número:"))
+x1 = float(input("Introduzca el primer número:"))
+x2 = float(input("Introduzca el segundo número:"))
+x3 = float(input("Introduzca el tercer número:"))
 
 if x1 > x2:
     maximo = x1
