@@ -7,45 +7,26 @@ R1. Calcular la variación de la población por provincias desde el año 2011 a 
 import csv
 import os
 import numpy as np
+from funciones import html_start, html_end
 
-VARIACION_ABSOLUTA = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
-VARIACION_RELATIVA = lambda poblacion, poblacion_anterior: (poblacion - poblacion_anterior) / poblacion_anterior * 100
-def html_start(title):
-    html = """ <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>""" + title + """"</title>
-    <link rel="stylesheet" href="./ayudas/estilo.css">
-  </head>
-  <body>
-"""
-    return html
+## Funciones para el calculo de la poblacion
+variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
+variacion_relativa = lambda poblacion, poblacion_anterior: (poblacion - poblacion_anterior) / poblacion_anterior * 100
 
-
-def html_end():
-    html = """ </body> </html> """
-    return html
-
-
-# funcion para leer del csv suministrado
-
+# Variables globales para la lectura del css en R1
 FIRST_WORD = "Total Nacional"
 LAST_WORD = "Notas"
 
 
-
-# funcion para escribir el csv en html
+# funcion para escribir el html con sus datos nuevos
 def write_html(file):
-    cad = clean_csv(file, FIRST_WORD, LAST_WORD)
+    cad = csv_to_cleaned_cad(file, FIRST_WORD, LAST_WORD)
     years = get_years(file)
-    new_file = write_cleaned_csv(file, cad)
+    new_file = write_cad_to_csv(file, cad)
 
-    number_of_years = str(len(years) - 1)
-    cad = read_final_csv("new_" + file, years)
-
+    number_of_years = len(years) - 1
+    number_of_years_str = str(number_of_years)
+    cad = read_final_csv(new_file, years)
 
     with open("salida.html", 'w', encoding='utf-8') as f:
         f.write(html_start("Variación de la población por provincias"))
@@ -53,15 +34,15 @@ def write_html(file):
         tabla = """<table>\n
             <tr>\n
                 <th></th> \n
-                <th colspan=" """ + number_of_years + """"> Variación absoluta </th>\n
-                <th colspan=" """ + number_of_years + """"> Variación relativa </th>\n
+                <th colspan=" """ + number_of_years_str + """"> Variación absoluta </th>\n
+                <th colspan=" """ + number_of_years_str + """"> Variación relativa </th>\n
             </tr>\n
             <tr>\n
                 <th> Provincia </th> \n"""
 
-        for i in range(0, len(years) - 1):
+        for i in range(0, number_of_years):
             tabla += """<th> """ + str(years[i]) + """ </th>\n"""
-        for i in range(0, len(years) - 1):
+        for i in range(0, number_of_years):
             tabla += """<th> """ + str(years[i]) + """ </th>\n"""
 
         tabla += "</tr>\n"
@@ -71,6 +52,7 @@ def write_html(file):
         f.write(html_end())
 
 
+# funcion para leer el csv limpio y escribirlo en el html
 def read_final_csv(file, years):
     number_years = (len(years) - 1)
 
@@ -79,17 +61,19 @@ def read_final_csv(file, years):
         for rec in csv.reader(f, delimiter=';'):
             cad += "<tr>"
             cad += "<td>" + str(rec[0]) + "</td>"
-            for i in range(0,number_years):
-                cad += "<td>" + str(round(VARIACION_ABSOLUTA(float(rec[i+1]), float(rec[i + 2])), 2)) + "</td>\n"
+            for i in range(0, number_years):
+                cad += "<td>" + str(round(variacion_absoluta(float(rec[i + 1]), float(rec[i + 2])), 2)) + "</td>\n"
 
             for i in range(0, number_years):
-                cad += "<td>" + str(round(VARIACION_RELATIVA(float(rec[i+1]), float(rec[i + 2])), 2)) + "</td>\n"
+                cad += "<td>" + str(round(variacion_relativa(float(rec[i + 1]), float(rec[i + 2])), 2)) + "</td>\n"
             cad += "</tr>"
 
+    os.remove(file)
     return cad
 
 
-def clean_csv(file, first_word, last_word):
+# Convierte el csv a una cadena con los datos necesarios dado una primera y ultima palabra a buscar
+def csv_to_cleaned_cad(file, first_word, last_word):
     first_file = open(file, "r", encoding="utf8")
     cad = first_file.read()
     first_file.close()
@@ -100,13 +84,19 @@ def clean_csv(file, first_word, last_word):
     return cad[first:last]
 
 
-def write_cleaned_csv(file, cad):
-    new_file = open("new_" + file, "w", encoding="utf8")
+# Escribe una cadena en un archivo csv y devolvemos el nombre del nuevo archivo
+def write_cad_to_csv(csv, cad):
+    # modificar la ultima parte del path
+    csv_name = csv.split("/")[-1]
+    new_csv = csv.replace(csv_name, "new_" + csv_name)
+
+    new_file = open(new_csv, "w", encoding="utf8")
     new_file.write(cad)
     new_file.close()
-    return new_file
+    return new_csv
 
 
+# Dado un csv genérico recoge los años en los que este contiene los datos
 def get_years(file):
     years = []
     with open(file, encoding='utf-8') as f:
@@ -116,7 +106,7 @@ def get_years(file):
                 for i in range(1, len(reg)):
                     years.append(int(reg[i]))
                     if i != 1 and years[0] == int(reg[i]):
-                        years.pop() # ultima almacenada = primera
+                        years.pop()  # ultima almacenada = primera
                         break
 
                 return years
@@ -124,7 +114,6 @@ def get_years(file):
     return years
 
 
-
-file = "poblacionProvinciasHM2010-17.csv"
+# MAIN
+file = "entradas/poblacionProvinciasHM2010-17.csv"
 write_html(file)
-
