@@ -1,6 +1,6 @@
 ## Escribe a cadena el formato html
 import os
-
+import csv
 
 def html_start(title):
     html = """ <!DOCTYPE html>
@@ -21,4 +21,44 @@ def html_end():
     html = """ </body> </html> """
     return html
 
-#cambiar el nombre de un archivo y devolver el path
+
+# Convierte el csv a una cadena con los datos necesarios dado una primera y ultima palabra a buscar
+def csv_to_cleaned_cad(file, first_word, last_word):
+    first_file = open(file, "r", encoding="utf8")
+    cad = first_file.read()
+    first_file.close()
+
+    first = cad.find(first_word)
+    last = cad.find(last_word)
+
+    return cad[first:last]
+
+
+# Escribe una cadena en un archivo csv y devolvemos el nombre del nuevo archivo
+def write_cad_to_csv(csv, cad):
+    # modificar la ultima parte del path
+    csv_name = csv.split("/")[-1]
+    new_csv = csv.replace(csv_name, "new_" + csv_name)
+
+    new_file = open(new_csv, "w", encoding="utf8")
+    new_file.write(cad)
+    new_file.close()
+    return new_csv
+
+
+# Dado un csv genérico recoge los años en los que este contiene los datos
+def get_years(file):
+    years = []
+    with open(file, encoding='utf-8') as f:
+        data = csv.reader(f, delimiter=';')
+        for reg in data:
+            if len(reg) > 1 and reg[1].isnumeric():
+                for i in range(1, len(reg)):
+                    years.append(int(reg[i]))
+                    if i != 1 and years[0] == int(reg[i]):
+                        years.pop()  # ultima almacenada = primera
+                        break
+
+                return years
+
+    return years
