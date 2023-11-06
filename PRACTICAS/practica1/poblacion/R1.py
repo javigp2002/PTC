@@ -7,7 +7,7 @@ R1. Calcular la variación de la población por provincias desde el año 2011 a 
 import csv
 import os
 import numpy as np
-from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years
+from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv
 
 ## Funciones para el calculo de la poblacion
 variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
@@ -23,7 +23,7 @@ def write_html(file):
     cad = csv_to_cleaned_cad(file, FIRST_WORD, LAST_WORD)
     new_file = write_cad_to_csv(file, cad)
 
-    years = get_years(file)
+    years = get_years_csv(file)
     number_of_years = len(years) - 1
     number_of_years_str = str(number_of_years)
     cad = read_final_csv(new_file, years)

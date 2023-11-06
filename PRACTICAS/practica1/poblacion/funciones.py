@@ -48,7 +48,7 @@ def write_cad_to_csv(csv, cad, cabecera=""):
 
 
 # Dado un csv genérico recoge los años en los que este contiene los datos
-def get_years(file):
+def get_years_csv(file):
     years = []
     with open(file, encoding='utf-8') as f:
         data = csv.reader(f, delimiter=';')

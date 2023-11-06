@@ -7,7 +7,7 @@ R1. Calcular la variación de la población por provincias desde el año 2011 a 
 import csv
 import os
 import numpy as np
-from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years
+from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv
 
 ## Funciones para el calculo de la poblacion
 variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
@@ -32,7 +32,7 @@ def write_html(file):
     new_file = write_cad_to_csv(file, cad, CABECERA)
 
     # cogemos el numero de años que vamos a tener en la tabla
-    years = get_years(file)
+    years = get_years_csv(file)
     number_of_years = len(years) - 1 #-1 por la variación
     number_of_years_str = str(number_of_years)
 
@@ -91,11 +91,12 @@ def dict_to_cad_html(array_dict):
 
     # cogemos los "keys" del primer diccionario para saber el orden de las columnas
     if array_dict:
-        array_names = get_array_names_dict_items(array_dict[0])
+        array_names = get_array_of_dict_keys(array_dict[0])
         print(array_names)
     else:  # no puede imprimir nada si no hay datos
         return cad
 
+    # recorremos el array de diccionarios y vamos escribiendo la cadena
     for actual_dict in array_dict:
         cad += "<tr> <td>" + actual_dict[array_names[0]] + "</td>\n"
         cad_relative = ""
@@ -112,7 +113,7 @@ def dict_to_cad_html(array_dict):
     return cad
 
 
-def get_array_names_dict_items(dict):
+def get_array_of_dict_keys(dict):
     array_names = []
     for key in dict.keys():
         array_names.append(key)

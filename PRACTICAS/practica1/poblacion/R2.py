@@ -4,7 +4,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 import certifi
 import ssl
-from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years
+from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv
 import csv
 
 
@@ -43,7 +43,7 @@ def list_autonomies_provinces():
 
 def write_html(file):
     cad = csv_to_cleaned_cad(file, FIRST_WORD, LAST_WORD)
-    years = get_years(file)
+    years = get_years_csv(file)
     new_file = write_cad_to_csv(file, cad)
     province_data = save_provinces_data(new_file, len(years))
     print(province_data)
