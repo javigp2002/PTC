@@ -28,7 +28,7 @@ def write_html(file):
     number_of_years_str = str(number_of_years)
     cad = read_final_csv(new_file, years)
 
-    with open("salida.html", 'w', encoding='utf-8') as f:
+    with open("salidaR1.html", 'w', encoding='utf-8') as f:
         f.write(html_start("Variación de la población por provincias"))
 
         tabla = """<table>\n

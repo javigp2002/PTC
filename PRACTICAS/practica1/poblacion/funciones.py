@@ -35,14 +35,13 @@ def csv_to_cleaned_cad(file, first_word, last_word):
 
 
 # Escribe una cadena en un archivo csv y devolvemos el nombre del nuevo archivo
-def write_cad_to_csv(csv, cad):
+def write_cad_to_csv(csv, cad, cabecera=""):
     # modificar la ultima parte del path
     csv_name = csv.split("/")[-1]
     new_csv = csv.replace(csv_name, "new_" + csv_name)
 
     new_file = open(new_csv, "w", encoding="utf8")
-    cabecera = ("Provincia;T2017;T2016;T2015;T2014;T2013;T2012;T2011;T2010;H2017;H2016;H2015;H2014;H2013;H2012;H2011"
-                ";H2010;M2017;M2016;M2015;M2014;M2013;M2012;M2011;M2010")
+
     new_file.write(cabecera+cad)
     new_file.close()
     return new_csv

@@ -85,7 +85,7 @@ def cad_list_data_autonomies(list_autonomies, province_data , years):
     cad = ""
     for autonomy in list_autonomies:
         cad += "<tr>\n<td>" + str(autonomy) + "</td>\n"
-        for i in range (0, years*3):
+        for i in range(0, years*3):
             poblation_autonomy = 0
             for province in list_autonomies[autonomy]:
                 poblation_autonomy += float(province_data[province][i])
