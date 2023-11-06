@@ -2,6 +2,7 @@
 import os
 import csv
 
+
 def html_start(title):
     html = """ <!DOCTYPE html>
 <html lang="en">
@@ -16,11 +17,17 @@ def html_start(title):
 """
     return html
 
+
 # Escribe a cadena el formato final del html
 def html_end():
     html = """ </body> </html> """
     return html
 
+def write_html(file, title, cad):
+    with open(file, 'w', encoding='utf-8') as f:
+        f.write(html_start(title))
+        f.write(cad)
+        f.write(html_end())
 
 # Convierte el csv a una cadena con los datos necesarios dado una primera y ultima palabra a buscar
 def csv_to_cleaned_cad(file, first_word, last_word):
@@ -34,6 +41,14 @@ def csv_to_cleaned_cad(file, first_word, last_word):
     return cad[first:last]
 
 
+# Escribe un csv con los datos limpios y devolvemos el nombre del nuevo archivo
+def write_cleaned_csv(file, first_word, last_word, cabecera =""):
+    cad = csv_to_cleaned_cad(file, first_word, last_word)
+    new_file = write_cad_to_csv(file, cad, cabecera)
+
+    return new_file
+
+
 # Escribe una cadena en un archivo csv y devolvemos el nombre del nuevo archivo
 def write_cad_to_csv(csv, cad, cabecera=""):
     # modificar la ultima parte del path
@@ -42,7 +57,7 @@ def write_cad_to_csv(csv, cad, cabecera=""):
 
     new_file = open(new_csv, "w", encoding="utf8")
 
-    new_file.write(cabecera+cad)
+    new_file.write(cabecera + cad)
     new_file.close()
     return new_csv
 
