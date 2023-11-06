@@ -58,14 +58,13 @@ def read_final_csv(file, years):
 
     with open(file, encoding='utf-8') as f:
         cad = ""
-        for rec in csv.reader(f, delimiter=';'):
+        for rec in csv.DictReader(f, delimiter=';'):
+            print(rec)
             cad += "<tr>"
-            cad += "<td>" + str(rec[0]) + "</td>"
-            for i in range(0, number_years):
-                cad += "<td>" + str(round(variacion_absoluta(float(rec[i + 1]), float(rec[i + 2])), 2)) + "</td>\n"
+            cad += "<td>" + str(rec['Provincia']) + "</td>"
+            cad += "<td>" + str(round(variacion_absoluta(float(rec['T2017']), float(rec[i + 2])), 2)) + "</td>\n"
 
-            for i in range(0, number_years):
-                cad += "<td>" + str(round(variacion_relativa(float(rec[i + 1]), float(rec[i + 2])), 2)) + "</td>\n"
+
             cad += "</tr>"
 
     os.remove(file)

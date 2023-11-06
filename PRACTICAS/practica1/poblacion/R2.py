@@ -76,6 +76,8 @@ def write_html(file):
         f.write(tabla)
         f.write(html_end())
 
+    os.remove(new_file)
+
 
 # funcion para leer el csv limpio y escribirlo en el html
 def cad_list_data_autonomies(list_autonomies, province_data , years):
@@ -112,6 +114,7 @@ def save_provinces_data(file, number_years):
 # MAIN
 file = "entradas/poblacionProvinciasHM2010-17.csv"
 write_html(file)
+
 
 
 
