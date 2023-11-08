@@ -25,6 +25,8 @@ CHARS_TO_KEEP = "T"
 CABECERA = ("Provincia;T2017;T2016;T2015;T2014;T2013;T2012;T2011;T2010;H2017;H2016;H2015;H2014;H2013;H2012;H2011"
             ";H2010;M2017;M2016;M2015;M2014;M2013;M2012;M2011;M2010;\n")
 
+YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010']
+
 SALIDAHTML = "variacionProvincias.html"
 
 
@@ -35,7 +37,7 @@ def r1(file):
     new_file = write_cleaned_csv(file, FIRST_WORD, LAST_WORD, CABECERA)
 
     # leemos el csv limpio y lo pasamos a un array de diccionarios para luego tener una cadena con los datos en html
-    array_dict = csv_to_array_dict(new_file, CHARS_TO_KEEP)
+    array_dict = csv_to_array_dict(new_file, CHARS_TO_KEEP, YEARS_REQUIRED)
     cad = dict_to_cad_html(array_dict)
 
     title = "Variación de la población por provincias"
@@ -46,7 +48,7 @@ def r1(file):
 
 # funcion para las columnas del html
 def th_table():
-    years = get_years_csv(file)
+    years = YEARS_REQUIRED
     number_of_years = len(years) - 1  # -1 para no coger el ultimo elemento que es el total
     number_of_years_str = str(number_of_years)
 
