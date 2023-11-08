@@ -28,41 +28,33 @@ def r3(file):
     array_dict = csv_to_array_dict(new_file, CHARS_TO_KEEP, YEARS_REQUIRED)
 
     province_data = save_provinces_data_in_numpy(array_dict)
-    list_autonomies = provinces_data_to_autonomies_data(province_data, list_autonomies_provinces())
-    print(list_autonomies)
+    dict_autonomies = provinces_data_to_autonomies_data(province_data, list_autonomies_provinces())
 
     # pinta un grafico de barras con los datos de las autonomias
 
-    etiquetas = get_array_of_dict_keys(list_autonomies)
-    print (etiquetas)
-    valores = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
-    valores2 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    etiquetas = get_array_of_dict_keys(dict_autonomies)
+
+    men = []
+    woman = []
+    for autonomy in dict_autonomies:
+        men.append(dict_autonomies[autonomy][1])
+        woman.append(dict_autonomies[autonomy][2])
+
 
     co = np.arange(len(etiquetas))
     an = 0.35
 
     fig, ax = plt.subplots()
-    ax.bar(co - an/2, valores, an, label='Hombres')
-    ax.bar(co + an/2, valores2, an, label='Mujeres')
+    ax.bar(co - an/2, men, an, label='Hombres')
+    ax.bar(co + an/2, woman, an, label='Mujeres')
 
     ax.set_title('Población por comunidades autónomas')
     ax.set_ylabel('Población')
     ax.set_xlabel('Comunidades autónomas')
-    ax.set_xticklabels(etiquetas)
     ax.set_xticks(co)
-    plt.xticks(rotation=45)
+    ax.set_xticklabels(etiquetas)
     fig.autofmt_xdate(rotation=45)
     plt.savefig('foo.png')
-    #
-    # for autonomy in list_autonomies:
-    #     print(autonomy, list_autonomies[autonomy])
-    #
-    # cad = cad_list_data_autonomies(list_autonomies)
-    #
-    # tabla = th_table(YEARS_REQUIRED) + cad
-    # title = "Variación de la población por comunidades autónomas"
-    # write_html(SALIDAHTML, title, tabla)
-
 
 # Devuelve en un array las tuplas de las comunidades autonomas con cada provincia
 def list_autonomies_provinces():
