@@ -1,6 +1,8 @@
 import locale
 import os
 import urllib.request
+
+import numpy as np
 from bs4 import BeautifulSoup
 import certifi
 import ssl
@@ -85,12 +87,14 @@ def cad_list_data_autonomies(list_autonomies, province_data, years):
     cad = ""
     for autonomy in list_autonomies:
         cad += "<tr>\n<td>" + str(autonomy) + "</td>\n"
-        for i in range(0, years * 3):
-            poblation_autonomy = 0
-            for province in list_autonomies[autonomy]:
-                poblation_autonomy += float(province_data[province][i])
 
-            cad += "<td>" + locale.format_string('%.2f', poblation_autonomy, grouping=True) + "</td>\n"
+        final_array = np.zeros(years * 3+1)
+
+        for province in list_autonomies[autonomy]:
+            final_array = np.add(final_array, province_data[province])
+
+        for i in range(1, years * 3+1):
+            cad += "<td>" + locale.format_string('%.2f', final_array[i], grouping=True) + "</td>\n"
 
         cad += "</tr>\n"
 
@@ -104,11 +108,11 @@ def save_provinces_data(file, number_years):
     with open(file, encoding='utf-8') as f:
         dict_provinces_data = {}
         for rec in csv.reader(f, delimiter=';'):
-            valores_totales = []
             num_valores = number_years * 3 + 1  # Hay que contar el nombre de la provincia
+            valores_totales = np.zeros(num_valores)
 
             for i in range(1, num_valores):
-                valores_totales.append(rec[i])
+                valores_totales[i] = (rec[i])
 
             dict_provinces_data[rec[0]] = valores_totales
     return dict_provinces_data
