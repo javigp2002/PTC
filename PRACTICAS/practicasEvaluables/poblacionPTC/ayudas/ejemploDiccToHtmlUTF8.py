@@ -13,7 +13,7 @@ los ficheros.
 Para tablas más complejas ver: https://www.tablesgenerator.com/html_tables
 """
 
-fileTable=open("ejemploTabla1.html","w", encoding="utf8")
+fileTable=open("ejemploTabla1.html", "w", encoding="utf8")
 
 tabla1="""<!DOCTYPE html><html><head><title>Ejemplo tabla</title>
 <link rel="stylesheet" href="estilo.css"> <meta charset="utf8"></head>
@@ -43,7 +43,7 @@ fileTable.close()
 print("Generada tabla html ejemploTabla1.html")
 
 
-fileEstilo=open("estilo.css","w", encoding="utf8")
+fileEstilo=open("estilo.css", "w", encoding="utf8")
 
 estilo="""  table, th, td {
                 border-collapse: collapse;    
@@ -61,7 +61,7 @@ fileEstilo.close()
 
 
 
-f = open('poblacionComunidades.html','w', encoding="utf8" )
+f = open('poblacionComunidades.html', 'w', encoding="utf8")
 
 
 paginaPob = """<!DOCTYPE html><html>

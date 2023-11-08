@@ -20,7 +20,7 @@ dejar cabecera y datos
 """
 import csv
 
-ficheroInicial=open("poblacionPrueba.csv","r", encoding="utf8")
+ficheroInicial=open("poblacionPrueba.csv", "r", encoding="utf8")
 
 
 cadenaPob=ficheroInicial.read()
@@ -38,7 +38,7 @@ print("\nFichero leido final es\n",cadenaFinal)
 
 cabecera="Provincia;H2017;H2016;H2015;M2017;M2016;M2015"
 
-ficheroFinal=open("poblacionPruebaFinal.csv", "w",encoding="utf8")
+ficheroFinal=open("poblacionPruebaFinal.csv", "w", encoding="utf8")
 
 ficheroFinal.write(cabecera+'\n'+cadenaFinal)
 
