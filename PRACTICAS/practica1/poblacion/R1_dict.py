@@ -8,7 +8,7 @@ import csv
 import os
 import numpy as np
 from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv, write_cleaned_csv, \
-    write_html
+    write_html, DIRECTORIO_FICHEROS, get_array_of_dict_keys, clean_dict, csv_to_array_dict
 
 ## Funciones para el calculo de la poblacion
 variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
@@ -28,12 +28,14 @@ CABECERA = ("Provincia;T2017;T2016;T2015;T2014;T2013;T2012;T2011;T2010;H2017;H20
 SALIDAHTML = "variacionProvincias.html"
 
 
-# funcion para escribir el html con sus datos nuevos
-def R1(file):
+"""
+Función
+"""
+def r1(file):
     new_file = write_cleaned_csv(file, FIRST_WORD, LAST_WORD, CABECERA)
 
     # leemos el csv limpio y lo pasamos a un array de diccionarios para luego tener una cadena con los datos en html
-    array_dict = csv_to_array_dict(new_file)
+    array_dict = csv_to_array_dict(new_file, CHARS_TO_KEEP)
     cad = dict_to_cad_html(array_dict)
 
     title = "Variación de la población por provincias"
@@ -66,28 +68,6 @@ def th_table():
 
     return tabla
 
-
-# funcion para leer el csv limpio y escribirlo en el html
-def csv_to_array_dict(file):
-    with open(file, encoding='utf-8') as f:
-        array_dict = []
-        for rec in csv.DictReader(f, delimiter=';'):
-            array_dict.append(clean_dict(CHARS_TO_KEEP, rec))
-
-    os.remove(file)
-    return array_dict
-
-
-# funcion para recoger un diccionario y devolverlo con los valores que necesitamos
-def clean_dict(chars_to_keep, dict):
-    cleaned_dict = {}
-    for key in dict:
-        if len(key) > 0 and key[0] in chars_to_keep or key == "Provincia":
-            cleaned_dict[key] = dict[key]
-
-    return cleaned_dict
-
-
 # funcion para dado un [] de diccionarios, devolver una cadena con los datos para tabla de variación absoluta y relativa
 def dict_to_cad_html(array_dict):
     cad = ""
@@ -95,7 +75,6 @@ def dict_to_cad_html(array_dict):
     # cogemos los "keys" del primer diccionario para saber el orden de las columnas
     if array_dict:
         array_names = get_array_of_dict_keys(array_dict[0])
-        print(array_names)
     else:  # no puede imprimir nada si no hay datos
         return cad
 
@@ -117,14 +96,9 @@ def dict_to_cad_html(array_dict):
     return cad
 
 
-def get_array_of_dict_keys(dict):
-    array_names = []
-    for key in dict.keys():
-        array_names.append(key)
 
-    return array_names
 
 
 # MAIN
-file = "entradas/poblacionProvinciasHM2010-17.csv"
-R1(file)
+file = DIRECTORIO_FICHEROS + "poblacionProvinciasHM2010-17.csv"
+r1(file)

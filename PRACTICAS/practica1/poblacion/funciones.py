@@ -2,7 +2,7 @@
 import os
 import csv
 
-
+DIRECTORIO_FICHEROS='entradas/'
 def html_start(title):
     html = """ <!DOCTYPE html>
 <html lang="en">
@@ -78,3 +78,30 @@ def get_years_csv(file):
                 return years
 
     return years
+
+# funcion para recoger un diccionario y devolverlo con los valores que necesitamos
+def clean_dict(chars_to_keep, dict, years_required):
+    cleaned_dict = {}
+    for key in dict:
+        if key and len(key) > 0 and key[0] in chars_to_keep and key[1::] in years_required or key == "Provincia":
+            cleaned_dict[key] = dict[key]
+
+    return cleaned_dict
+
+def get_array_of_dict_keys(dict):
+    array_names = []
+    for key in dict.keys():
+        array_names.append(key)
+
+    return array_names
+
+
+# funcion para leer el csv limpio y escribirlo en el html
+def csv_to_array_dict(file, chars_to_keep, years_required):
+    with open(file, encoding='utf-8') as f:
+        array_dict = []
+        for rec in csv.DictReader(f, delimiter=';'):
+            array_dict.append(clean_dict(chars_to_keep, rec, years_required))
+
+    os.remove(file)
+    return array_dict
