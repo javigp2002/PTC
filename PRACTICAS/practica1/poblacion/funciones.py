@@ -2,7 +2,12 @@
 import os
 import csv
 
-DIRECTORIO_FICHEROS='entradas/'
+import numpy as np
+from bs4 import BeautifulSoup
+
+DIRECTORIO_FICHEROS = 'entradas/'
+
+
 def html_start(title):
     html = """ <!DOCTYPE html>
 <html lang="en">
@@ -23,11 +28,13 @@ def html_end():
     html = """ </body> </html> """
     return html
 
+
 def write_html(file, title, cad):
     with open(file, 'w', encoding='utf-8') as f:
         f.write(html_start(title))
         f.write(cad)
         f.write(html_end())
+
 
 # Convierte el csv a una cadena con los datos necesarios dado una primera y ultima palabra a buscar
 def csv_to_cleaned_cad(file, first_word, last_word):
@@ -42,7 +49,7 @@ def csv_to_cleaned_cad(file, first_word, last_word):
 
 
 # Escribe un csv con los datos limpios y devolvemos el nombre del nuevo archivo
-def write_cleaned_csv(file, first_word, last_word, cabecera =""):
+def write_cleaned_csv(file, first_word, last_word, cabecera=""):
     cad = csv_to_cleaned_cad(file, first_word, last_word)
     new_file = write_cad_to_csv(file, cad, cabecera)
 
@@ -79,6 +86,7 @@ def get_years_csv(file):
 
     return years
 
+
 # funcion para recoger un diccionario y devolverlo con los valores que necesitamos
 def clean_dict(chars_to_keep, dict, years_required):
     cleaned_dict = {}
@@ -87,6 +95,7 @@ def clean_dict(chars_to_keep, dict, years_required):
             cleaned_dict[key] = dict[key]
 
     return cleaned_dict
+
 
 def get_array_of_dict_keys(dict):
     array_names = []
@@ -105,3 +114,78 @@ def csv_to_array_dict(file, chars_to_keep, years_required):
 
     os.remove(file)
     return array_dict
+
+
+# Devuelve en un array las tuplas de las comunidades autonomas con cada provincia
+def list_autonomies_provinces():
+    dict_valores_autonomias = {}
+
+    # url = "https://www.ine.es/daco/daco42/codmun/cod_ccaa_provincia.htm"
+    # datos = urllib.request.urlopen(url).read()  # en utf8
+
+    comunidadesFich = open(DIRECTORIO_FICHEROS + 'comunidadAutonoma-Provincia.htm', 'r', encoding="utf8")
+    datos = comunidadesFich.read()
+
+    soup = BeautifulSoup(datos, 'html.parser')
+    celdas = soup.find_all('tr')
+
+    # coge los valores de las celdas de 2 en 2
+    for celda in celdas:
+        temp = celda.get_text().split("\n")
+        if temp[1].isnumeric():
+            autonomia = temp[1] + " " + temp[2]
+            provincia = temp[3] + " " + temp[4]
+
+            if autonomia in dict_valores_autonomias:
+                temp_add = dict_valores_autonomias[autonomia]
+                temp_add.append(provincia)
+                dict_valores_autonomias[autonomia] = temp_add
+            else:
+                dict_valores_autonomias[autonomia] = [provincia]
+
+    return dict_valores_autonomias
+
+
+# funcion que dada una lista de diccionarios con las autonomias y sus provincias, y numpys con los datos de las provincias
+# devuelve la suma de esos datos en un numpy por autonomia
+def provinces_data_to_autonomies_data(province_data, list_autonomies):
+    new_list_autonomies = {}
+    for autonomy in list_autonomies:
+        number_of_data = len(province_data[list_autonomies[autonomy][0]])
+        final_array = np.zeros(number_of_data)
+
+        for province in list_autonomies[autonomy]:
+            final_array = np.add(final_array, province_data[province])
+
+        new_list_autonomies[autonomy] = final_array
+    return new_list_autonomies
+
+
+# funcion para recompile valores de las provincias
+def save_provinces_data_in_numpy(array_dict):
+    dict_provinces_data = {}
+
+    # cogemos los "keys" del primer diccionario para saber el orden de las columnas
+    if array_dict:
+        array_names = get_array_of_dict_keys(array_dict[0])
+    else:
+        raise ValueError("No hay datos")
+
+    for actual_dict in array_dict:
+        num_valores = len(array_names)
+        valores_totales = np.zeros(num_valores)
+
+        for i in range(1, num_valores):
+            valores_totales[i] = (actual_dict[array_names[i]])
+
+        dict_provinces_data[actual_dict[array_names[0]]] = valores_totales
+
+    return dict_provinces_data
+
+
+def get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_to_keep, years_required, cabecera):
+    new_file = write_cleaned_csv(file, first_word, last_word, cabecera)
+    array_dict = csv_to_array_dict(new_file, chars_to_keep, years_required)
+
+    province_data = save_provinces_data_in_numpy(array_dict)
+    return provinces_data_to_autonomies_data(province_data, list_autonomies_provinces())

@@ -6,164 +6,87 @@ from bs4 import BeautifulSoup
 import certifi
 import ssl
 from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv, write_cleaned_csv, \
-    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, get_array_of_dict_keys
+    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, get_array_of_dict_keys, save_provinces_data_in_numpy, \
+    provinces_data_to_autonomies_data, list_autonomies_provinces, get_dict_autonomies_with_provinces_data
 import csv
 
-# Variables globales para la lectura del css en R2
+# Variables globales para la lectura del css en R3
 FIRST_WORD = "02 Albacete"
 LAST_WORD = "Notas"
-
 CABECERA = ("Provincia;T2017;T2016;T2015;T2014;T2013;T2012;T2011;T2010;H2017;H2016;H2015;H2014;H2013;H2012;H2011"
             ";H2010;M2017;M2016;M2015;M2014;M2013;M2012;M2011;M2010;\n")
 
-YEARS_REQUIRED = ['2017']
-CHARS_TO_KEEP = "HM"
+YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010']
+CHARS_TO_KEEP = "T"
+
+# Variables globales para el gráfico de R3
+YEARS_POBLATION_GRAPH = ['2017']
+CHAR_TO_KEEP_GRAPH = "HM"
+NUMBER_AUTONOMIES = 10
+
+# Variable directorio
+DIRECTORIO_IMAGENES = "imagenes/"
 
 SALIDAHTML = "poblacionComAutonomas.html"
 
+FILE_TO_READ = DIRECTORIO_FICHEROS + "poblacionProvinciasHM2010-17.csv"
 
-def r3(file):
-    new_file = write_cleaned_csv(file, FIRST_WORD, LAST_WORD, CABECERA)
 
-    array_dict = csv_to_array_dict(new_file, CHARS_TO_KEEP, YEARS_REQUIRED)
+def r3():
+    dt = np.dtype([('mean', np.float64), ('name', np.unicode_, 40)])
+    array_autonomies_name_sorted = numpy_autonomies_array_sort_by_mean(dt, NUMBER_AUTONOMIES)
 
-    province_data = save_provinces_data_in_numpy(array_dict)
-    dict_autonomies = provinces_data_to_autonomies_data(province_data, list_autonomies_provinces())
+    dict_autonomies_graph = get_dict_autonomies_with_provinces_data(FILE_TO_READ, FIRST_WORD, LAST_WORD,
+                                                                    CHAR_TO_KEEP_GRAPH, YEARS_POBLATION_GRAPH, CABECERA)
 
-    # pinta un grafico de barras con los datos de las autonomias
-
-    etiquetas = get_array_of_dict_keys(dict_autonomies)
+    etiquetas = array_autonomies_name_sorted
 
     men = []
     woman = []
-    for autonomy in dict_autonomies:
-        men.append(dict_autonomies[autonomy][1])
-        woman.append(dict_autonomies[autonomy][2])
-
+    for autonomy in array_autonomies_name_sorted:
+        men.append(dict_autonomies_graph[autonomy][1])
+        woman.append(dict_autonomies_graph[autonomy][2])
 
     co = np.arange(len(etiquetas))
     an = 0.35
 
-    fig, ax = plt.subplots()
-    ax.bar(co - an/2, men, an, label='Hombres')
-    ax.bar(co + an/2, woman, an, label='Mujeres')
+    fig, axes = plt.subplots()
 
-    ax.set_title('Población por comunidades autónomas')
-    ax.set_ylabel('Población')
-    ax.set_xlabel('Comunidades autónomas')
-    ax.set_xticks(co)
-    ax.set_xticklabels(etiquetas)
+    #Barras que se ponen
+    axes.bar(co - an / 2, men, an, label='Hombres')
+    axes.bar(co + an / 2, woman, an, label='Mujeres')
+
+    axes.set_title('Población por comunidades autónomas')
+    axes.set_ylabel('Población')
+    axes.set_xlabel('Comunidades autónomas')
+    axes.set_xticks(co)
+    axes.set_xticklabels(etiquetas)
     fig.autofmt_xdate(rotation=45)
-    plt.savefig('foo.png')
+    plt.savefig(DIRECTORIO_IMAGENES + 'R3.png', bbox_inches='tight')
 
-# Devuelve en un array las tuplas de las comunidades autonomas con cada provincia
-def list_autonomies_provinces():
-    dict_valores_autonomias = {}
 
-    # url = "https://www.ine.es/daco/daco42/codmun/cod_ccaa_provincia.htm"
-    # datos = urllib.request.urlopen(url).read()  # en utf8
+# Dado el fichero de csv con su cabecera y limpio de datos innecesarios, devuelve el array con el nombre de las comunidades
+# autonomas según la media de población
+def numpy_autonomies_array_sort_by_mean(dt, number_of_autonomies):
+    dict_autonomies = get_dict_autonomies_with_provinces_data(FILE_TO_READ, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
+                                                              YEARS_REQUIRED, CABECERA)
 
-    comunidadesFich = open(DIRECTORIO_FICHEROS + 'comunidadAutonoma-Provincia.htm', 'r', encoding="utf8")
-    datos = comunidadesFich.read()
+    array_top_provinces_poblation_mean = np.array([], dtype=dt)
 
-    soup = BeautifulSoup(datos, 'html.parser')
-    celdas = soup.find_all('tr')
+    for autonomy in dict_autonomies:
+        array_top_provinces_poblation_mean = np.append(array_top_provinces_poblation_mean,
+                                                       np.array([(dict_autonomies[autonomy].mean(), autonomy)],
+                                                                dtype=dt))
 
-    # coge los valores de las celdas de 2 en 2
-    for celda in celdas:
-        temp = celda.get_text().split("\n")
-        if temp[1].isnumeric():
-            autonomia = temp[1] + " " + temp[2]
-            provincia = temp[3] + " " + temp[4]
-
-            if autonomia in dict_valores_autonomias:
-                temp_add = dict_valores_autonomias[autonomia]
-                temp_add.append(provincia)
-                dict_valores_autonomias[autonomia] = temp_add
-            else:
-                dict_valores_autonomias[autonomia] = [provincia]
-
-    return dict_valores_autonomias
+    # print(array_top_provinces_poblation_mean)
+    array_sorted = np.sort(array_top_provinces_poblation_mean, order='mean')[::-1]
+    # coger solo los valores 'name' de las 10 primeras autonomias
+    array_sorted = array_sorted[:number_of_autonomies]['name']
+    return array_sorted
 
 
 # funcion para las columnas del html
-def th_table(years):
-    number_of_years = len(years)
-    number_of_years_str = str(number_of_years)
 
-    tabla = """<table>\n
-                <tr>\n
-                </tr>\n
-                <tr>\n
-                    <th rowspan='2'>CCAA</th> \n
-                    <th colspan=" """ + number_of_years_str + """"> Total </th>\n
-                    <th colspan=" """ + number_of_years_str + """"> Hombre </th>\n
-                    <th colspan=" """ + number_of_years_str + """"> Mujer </th>\n
-                </tr>\n
-                <tr>\n"""
-
-    for i in range(0, number_of_years * 3):
-        tabla += """<th> """ + str(years[i % number_of_years]) + """ </th>\n"""
-    tabla += "</tr>\n"
-
-    return tabla
-
-
-# funcion que dada una lista de diccionarios con las autonomias y sus provincias, y numpys con los datos de las provincias
-# devuelve la suma de esos datos en un numpy por autonomia
-def provinces_data_to_autonomies_data(province_data, list_autonomies):
-    new_list_autonomies = {}
-    for autonomy in list_autonomies:
-        number_of_data = len(province_data[list_autonomies[autonomy][0]])
-        final_array = np.zeros(number_of_data)
-
-        for province in list_autonomies[autonomy]:
-            final_array = np.add(final_array, province_data[province])
-
-        new_list_autonomies[autonomy] = final_array
-    return new_list_autonomies
-
-
-# funcion para leer el csv limpio y escribirlo en el html
-def cad_list_data_autonomies(list_autonomies):
-    locale.setlocale(locale.LC_ALL, '')
-    cad = ""
-    for autonomy in list_autonomies:
-        cad += "<tr>\n<td>" + str(autonomy) + "</td>\n"
-
-        number_of_data = len(list_autonomies[autonomy])
-
-        for i in range(1, number_of_data):
-            cad += "<td>" + locale.format_string('%.2f', list_autonomies[autonomy][i], grouping=True) + "</td>\n"
-
-        cad += "</tr>\n"
-
-    cad += "</table>\n"
-
-    return cad
-
-
-# funcion para recopilar valores de las provincias
-def save_provinces_data_in_numpy(array_dict):
-    dict_provinces_data = {}
-
-    # cogemos los "keys" del primer diccionario para saber el orden de las columnas
-    if array_dict:
-        array_names = get_array_of_dict_keys(array_dict[0])
-    else:
-        raise ValueError("No hay datos")
-
-    for actual_dict in array_dict:
-        num_valores = len(array_names)
-        valores_totales = np.zeros(num_valores)
-
-        for i in range(1, num_valores):
-            valores_totales[i] = (actual_dict[array_names[i]])
-
-        dict_provinces_data[actual_dict[array_names[0]]] = valores_totales
-
-    return dict_provinces_data
-
+# fu
 # MAIN
-file = DIRECTORIO_FICHEROS + "poblacionProvinciasHM2010-17.csv"
-r3(file)
+r3()

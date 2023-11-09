@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup
 import certifi
 import ssl
 from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv, write_cleaned_csv, \
-    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, get_array_of_dict_keys
+    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, get_array_of_dict_keys, list_autonomies_provinces, \
+    provinces_data_to_autonomies_data, save_provinces_data_in_numpy
 import csv
 
 # Variables globales para la lectura del css en R2
@@ -33,38 +34,12 @@ def R2(file):
     cad = cad_list_data_autonomies(list_autonomies)
 
     tabla = th_table(YEARS_REQUIRED) + cad
+
+    body = tabla + "<img src='imagenes/R3.png' alt='Gráfico de barras de la población por comunidades autónomas'>\n"
+
     title = "Variación de la población por comunidades autónomas"
-    write_html(SALIDAHTML, title, tabla)
+    write_html(SALIDAHTML, title, body)
 
-
-# Devuelve en un array las tuplas de las comunidades autonomas con cada provincia
-def list_autonomies_provinces():
-    dict_valores_autonomias = {}
-
-    # url = "https://www.ine.es/daco/daco42/codmun/cod_ccaa_provincia.htm"
-    # datos = urllib.request.urlopen(url).read()  # en utf8
-
-    comunidadesFich = open(DIRECTORIO_FICHEROS + 'comunidadAutonoma-Provincia.htm', 'r', encoding="utf8")
-    datos = comunidadesFich.read()
-
-    soup = BeautifulSoup(datos, 'html.parser')
-    celdas = soup.find_all('tr')
-
-    # coge los valores de las celdas de 2 en 2
-    for celda in celdas:
-        temp = celda.get_text().split("\n")
-        if temp[1].isnumeric():
-            autonomia = temp[1] + " " + temp[2]
-            provincia = temp[3] + " " + temp[4]
-
-            if autonomia in dict_valores_autonomias:
-                temp_add = dict_valores_autonomias[autonomia]
-                temp_add.append(provincia)
-                dict_valores_autonomias[autonomia] = temp_add
-            else:
-                dict_valores_autonomias[autonomia] = [provincia]
-
-    return dict_valores_autonomias
 
 
 # funcion para las columnas del html
@@ -90,19 +65,6 @@ def th_table(years):
     return tabla
 
 
-# funcion que dada una lista de diccionarios con las autonomias y sus provincias, y numpys con los datos de las provincias
-# devuelve la suma de esos datos en un numpy por autonomia
-def provinces_data_to_autonomies_data(province_data, list_autonomies):
-    new_list_autonomies = {}
-    for autonomy in list_autonomies:
-        number_of_data = len(province_data[list_autonomies[autonomy][0]])
-        final_array = np.zeros(number_of_data)
-
-        for province in list_autonomies[autonomy]:
-            final_array = np.add(final_array, province_data[province])
-
-        new_list_autonomies[autonomy] = final_array
-    return new_list_autonomies
 
 
 # funcion para leer el csv limpio y escribirlo en el html
@@ -123,39 +85,6 @@ def cad_list_data_autonomies(list_autonomies):
 
     return cad
 
-
-# funcion para recopilar valores de las provincias
-def save_provinces_data_in_numpy(array_dict):
-    dict_provinces_data = {}
-
-    # cogemos los "keys" del primer diccionario para saber el orden de las columnas
-    if array_dict:
-        array_names = get_array_of_dict_keys(array_dict[0])
-    else:
-        raise ValueError("No hay datos")
-
-    for actual_dict in array_dict:
-        num_valores = len(array_names)
-        valores_totales = np.zeros(num_valores)
-
-        for i in range(1, num_valores):
-            valores_totales[i] = (actual_dict[array_names[i]])
-
-        dict_provinces_data[actual_dict[array_names[0]]] = valores_totales
-
-    return dict_provinces_data
-    #
-    # with open(file, encoding='utf-8') as f:
-    #     dict_provinces_data = {}
-    #     for rec in csv.reader(f, delimiter=';'):
-    #         num_valores = number_years * 3 + 1  # Hay que contar el nombre de la provincia
-    #         valores_totales = np.zeros(num_valores)
-    #
-    #         for i in range(1, num_valores):
-    #             valores_totales[i] = (rec[i])
-    #
-    #         dict_provinces_data[rec[0]] = valores_totales
-    # return dict_provinces_data
 
 
 # MAIN
