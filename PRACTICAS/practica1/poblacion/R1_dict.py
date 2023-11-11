@@ -8,7 +8,7 @@ import csv
 import os
 import numpy as np
 from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv, write_cleaned_csv, \
-    write_html, DIRECTORIO_FICHEROS, get_array_of_dict_keys, clean_dict, csv_to_array_dict
+    write_html, DIRECTORIO_FICHEROS, get_array_of_dict_keys, clean_dict, csv_to_array_dict, float_to_formated_cad
 
 ## Funciones para el calculo de la poblacion
 variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
@@ -89,8 +89,8 @@ def dict_to_cad_html(array_dict):
         for i in range(1, num_variations):
             a = float(actual_dict[array_names[i]])
             b = float(actual_dict[array_names[i + 1]])
-            cad += "<td>" + str(round(variacion_absoluta(a, b), 2)) + "</td>\n"
-            cad_relative += "<td>" + str(round(variacion_relativa(a, b), 2)) + "</td>\n"
+            cad += "<td>" + float_to_formated_cad((variacion_absoluta(a, b), 2)) + "</td>\n"
+            cad_relative += ("<td>" + float_to_formated_cad(round(variacion_relativa(a, b), 2)) + "</td>\n")
 
         cad += cad_relative
         cad += "</tr>"

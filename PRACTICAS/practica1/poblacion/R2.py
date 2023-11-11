@@ -8,7 +8,7 @@ import certifi
 import ssl
 from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv, write_cleaned_csv, \
     write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, get_array_of_dict_keys, list_autonomies_provinces, \
-    provinces_data_to_autonomies_data, save_provinces_data_in_numpy
+    provinces_data_to_autonomies_data, save_provinces_data_in_numpy, float_to_formated_cad
 import csv
 
 # Variables globales para la lectura del css en R2
@@ -69,7 +69,6 @@ def th_table(years):
 
 # funcion para leer el csv limpio y escribirlo en el html
 def cad_list_data_autonomies(list_autonomies):
-    locale.setlocale(locale.LC_ALL, '')
     cad = ""
     for autonomy in list_autonomies:
         cad += "<tr>\n<td>" + str(autonomy) + "</td>\n"
@@ -77,7 +76,7 @@ def cad_list_data_autonomies(list_autonomies):
         number_of_data = len(list_autonomies[autonomy])
 
         for i in range(1, number_of_data):
-            cad += "<td>" + locale.format_string('%.2f', list_autonomies[autonomy][i], grouping=True) + "</td>\n"
+            cad += "<td>" + float_to_formated_cad(list_autonomies[autonomy][i]) + "</td>\n"
 
         cad += "</tr>\n"
 

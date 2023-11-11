@@ -1,4 +1,5 @@
 ## Escribe a cadena el formato html
+import locale
 import os
 import csv
 
@@ -189,3 +190,7 @@ def get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_t
 
     province_data = save_provinces_data_in_numpy(array_dict)
     return provinces_data_to_autonomies_data(province_data, list_autonomies_provinces())
+
+def float_to_formated_cad(float):
+    locale.setlocale(locale.LC_ALL, '')
+    return locale.format_string('%.2f', float, grouping=True)
