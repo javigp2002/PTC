@@ -140,7 +140,8 @@ def dict_autonomies_provinces():
 
     return dict_valores_autonomias
 
-#sacamos los valores de las autonomias del primer html
+
+# sacamos los valores de las autonomias del primer html
 def dict_autonomies():
     dict_autonomies = {}
     comunidades_fich = open(DIRECTORIO_FICHEROS + 'comunidadesAutonomas.htm', 'r', encoding="utf8")
@@ -152,9 +153,9 @@ def dict_autonomies():
     # coge los valores de las celdas de 2 en 2
     for celda in celdas:
         temp = celda.get_text().split("\n")
-        if temp[1].isnumeric():
-            autonomy = temp[1] + " " + temp[2]
-            autonomy.replace(" - ", "-")
+        if temp[1][0].isnumeric():
+            autonomy = temp[1] + temp[2]
+            autonomy = autonomy.replace(" - ", "-")
             dict_autonomies[autonomy] = []
 
     return dict_autonomies
@@ -204,6 +205,7 @@ def get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_t
     province_data = save_provinces_data_in_numpy(array_dict)
     return provinces_data_to_autonomies_data(province_data, dict_autonomies_provinces())
 
-def float_to_formated_cad(float):
+
+def float_to_formated_cad(float, decimals=2):
     locale.setlocale(locale.LC_ALL, '')
-    return locale.format_string('%.2f', float, grouping=True)
+    return locale.format_string('%.' + str(decimals) + 'f', float, grouping=True)

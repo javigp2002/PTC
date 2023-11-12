@@ -76,7 +76,7 @@ def cad_list_data_autonomies(list_autonomies):
         number_of_data = len(list_autonomies[autonomy])
 
         for i in range(1, number_of_data):
-            cad += "<td>" + float_to_formated_cad(list_autonomies[autonomy][i]) + "</td>\n"
+            cad += "<td>" + float_to_formated_cad(list_autonomies[autonomy][i], 0) + "</td>\n"
 
         cad += "</tr>\n"
 
