@@ -1,6 +1,7 @@
 from funciones import write_cleaned_csv, \
     write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, dict_autonomies_provinces, \
-    provinces_data_to_autonomies_data, save_provinces_data_in_numpy, float_to_formated_cad
+    provinces_data_to_autonomies_data, save_provinces_data_in_numpy, float_to_formated_cad, \
+    get_dict_autonomies_with_provinces_data
 
 # Variables globales para la lectura del css en R2
 FIRST_WORD = "02 Albacete"
@@ -16,13 +17,10 @@ SALIDAHTML = "poblacionComAutonomas.html"
 
 
 def R2(file):
-    new_file = write_cleaned_csv(file, FIRST_WORD, LAST_WORD, CABECERA)
+    dict_autonomies = get_dict_autonomies_with_provinces_data(file, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
+                                                              YEARS_REQUIRED, CABECERA)
 
-    array_dict = csv_to_array_dict(new_file, CHARS_TO_KEEP, YEARS_REQUIRED)
-    province_data = save_provinces_data_in_numpy(array_dict)
-    list_autonomies = provinces_data_to_autonomies_data(province_data, dict_autonomies_provinces())
-
-    cad = cad_list_data_autonomies(list_autonomies)
+    cad = cad_list_data_autonomies(dict_autonomies)
 
     tabla = th_table(YEARS_REQUIRED) + cad
 
@@ -30,7 +28,6 @@ def R2(file):
 
     title = "Variación de la población por comunidades autónomas"
     write_html(SALIDAHTML, title, body)
-
 
 
 # funcion para las columnas del html
@@ -56,8 +53,6 @@ def th_table(years):
     return tabla
 
 
-
-
 # funcion para leer el csv limpio y escribirlo en el html
 def cad_list_data_autonomies(list_autonomies):
     cad = ""
@@ -74,7 +69,6 @@ def cad_list_data_autonomies(list_autonomies):
     cad += "</table>\n"
 
     return cad
-
 
 
 # MAIN

@@ -9,6 +9,12 @@ from bs4 import BeautifulSoup
 DIRECTORIO_FICHEROS = 'entradas/'
 
 
+#
+#     Funciones para escribir en html
+#     --------------------------------
+#
+#     Dado un titulo del html genera el formato html con este nombre
+#
 def html_start(title):
     html = """ <!DOCTYPE html>
 <html lang="en">
@@ -17,27 +23,43 @@ def html_start(title):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>""" + title + """"</title>
-    <link rel="stylesheet" href="./ayudas/estilo.css">
+    <link rel="stylesheet" href="./entradas/estilo.css">
   </head>
   <body>
 """
     return html
 
 
-# Escribe a cadena el formato final del html
+#
+#     Funciones para escribir en html
+#     --------------------------------
+#
+#     Genera el formato en cadena para el final del html
+#
 def html_end():
     html = """ </body> </html> """
     return html
 
 
-def write_html(file, title, cad):
+#
+#     Funciones para escribir en html
+#     --------------------------------
+#
+#     Genera la página web con el titulo y la body que se le pasa
+#     Esta se escribe en el fichero 'file' que se le pasa
+#
+def write_html(file, title, body):
     with open(file, 'w', encoding='utf-8') as f:
         f.write(html_start(title))
-        f.write(cad)
+        f.write(body)
         f.write(html_end())
 
 
 # Convierte el csv a una cadena con los datos necesarios dado una primera y ultima palabra a buscar
+#  file: fichero csv
+#   First_word: primera palabra a buscar
+#   last_word: ultima palabra a buscar
+
 def csv_to_cleaned_cad(file, first_word, last_word):
     first_file = open(file, "r", encoding="utf8")
     cad = first_file.read()
@@ -48,16 +70,7 @@ def csv_to_cleaned_cad(file, first_word, last_word):
 
     return cad[first:last]
 
-
-# Escribe un csv con los datos limpios y devolvemos el nombre del nuevo archivo
-def write_cleaned_csv(file, first_word, last_word, cabecera=""):
-    cad = csv_to_cleaned_cad(file, first_word, last_word)
-    new_file = write_cad_to_csv(file, cad, cabecera)
-
-    return new_file
-
-
-# Escribe una cadena en un archivo csv y devolvemos el nombre del nuevo archivo
+# Crea el fichero csv desde una cadena y devolvemos el nombre del nuevo archivo
 def write_cad_to_csv(csv, cad, cabecera=""):
     # modificar la ultima parte del path
     csv_name = csv.split("/")[-1]
@@ -70,7 +83,17 @@ def write_cad_to_csv(csv, cad, cabecera=""):
     return new_csv
 
 
-# Dado un csv genérico recoge los años en los que este contiene los datos
+
+# Escribe un csv con los datos limpios y devolvemos el nombre del nuevo archivo
+def write_cleaned_csv(file, first_word, last_word, cabecera=""):
+    cad = csv_to_cleaned_cad(file, first_word, last_word)
+    new_file = write_cad_to_csv(file, cad, cabecera)
+
+    return new_file
+
+
+
+# Dado un csv genérico de la Junta recoge los años en los que este contiene los datos
 def get_years_csv(file):
     years = []
     with open(file, encoding='utf-8') as f:
@@ -89,6 +112,8 @@ def get_years_csv(file):
 
 
 # funcion para recoger un diccionario y devolverlo con los valores que necesitamos
+# Dado una cabecera podemos necesitar desagregar información según sus caracteristicas
+#       años y caracteres (Total, Hombres, Mujeres)
 def clean_dict(chars_to_keep, dict, years_required):
     cleaned_dict = {}
     for key in dict:
@@ -98,6 +123,7 @@ def clean_dict(chars_to_keep, dict, years_required):
     return cleaned_dict
 
 
+# Dado un diccionario devuelve un array con los nombres de las claves
 def get_array_of_dict_keys(dict):
     array_names = []
     for key in dict.keys():
@@ -106,7 +132,10 @@ def get_array_of_dict_keys(dict):
     return array_names
 
 
-# funcion para leer el csv limpio y escribirlo en el html
+# funcion para leer el csv limpio y devolver según dada una cabecera, desagregar información según sus caracteristicas
+#       años y caracteres (Total, Hombres, Mujeres)
+# - elimina el fichero csv limpio
+# - Devuelve un array de diccionarios con los datos requeridos
 def csv_to_array_dict(file, chars_to_keep, years_required):
     with open(file, encoding='utf-8') as f:
         array_dict = []
@@ -117,7 +146,7 @@ def csv_to_array_dict(file, chars_to_keep, years_required):
     return array_dict
 
 
-# Devuelve en un array las tuplas de las comunidades autonomas con cada provincia
+# Devuelve en un diccionario de las comunidades autonomas con un array de todas sus provincias
 def dict_autonomies_provinces():
     dict_valores_autonomias = dict_autonomies()
 
@@ -141,7 +170,8 @@ def dict_autonomies_provinces():
     return dict_valores_autonomias
 
 
-# sacamos los valores de las autonomias del primer html
+# En comunidadesAutonomas.htm estan las comunidades autonomas, las cogemos y las metemos en un diccionario
+# con un array vacio para meter las provincias posteriormente
 def dict_autonomies():
     dict_autonomies = {}
     comunidades_fich = open(DIRECTORIO_FICHEROS + 'comunidadesAutonomas.htm', 'r', encoding="utf8")
@@ -161,22 +191,25 @@ def dict_autonomies():
     return dict_autonomies
 
 
-# funcion que dada una lista de diccionarios con las autonomias y sus provincias, y numpys con los datos de las provincias
-# devuelve la suma de esos datos en un numpy por autonomia
-def provinces_data_to_autonomies_data(province_data, list_autonomies):
-    new_list_autonomies = {}
-    for autonomy in list_autonomies:
-        number_of_data = len(province_data[list_autonomies[autonomy][0]])
+# funcion que dada una lista de diccionarios con las autonomias y sus provincias, y numpys con los datos recogidos
+# de las provincias.
+#       Devuelve un diccionario con cada autonomia y su numpy de la suma de los datos de sus provincias
+def provinces_data_to_autonomies_data(province_data, dict_autonomies):
+    new_dict_autonomies = {}
+    for autonomy in dict_autonomies:
+        number_of_data = len(province_data[dict_autonomies[autonomy][0]])
         final_array = np.zeros(number_of_data)
 
-        for province in list_autonomies[autonomy]:
+        for province in dict_autonomies[autonomy]:
             final_array = np.add(final_array, province_data[province])
 
-        new_list_autonomies[autonomy] = final_array
-    return new_list_autonomies
+        new_dict_autonomies[autonomy] = final_array
+    return new_dict_autonomies
 
 
-# funcion para recompile valores de las provincias
+# Función para, dado un array de diccionarios con los datos de las provincias recogidos del csv,
+#
+#   Devolver un diccionario con cada provincia y sus datos en un numpy
 def save_provinces_data_in_numpy(array_dict):
     dict_provinces_data = {}
 
@@ -198,6 +231,10 @@ def save_provinces_data_in_numpy(array_dict):
     return dict_provinces_data
 
 
+# Funcion para, dado un fichero csv, una primera y ultima palabra a buscar, los caracteres a mantener y la cabecera
+#   Devolver un diccionario con cada autonomia y sus datos en un numpy
+#
+# Esta función se utiliza para no repetir codigo en los distintos R
 def get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_to_keep, years_required, cabecera):
     new_file = write_cleaned_csv(file, first_word, last_word, cabecera)
     array_dict = csv_to_array_dict(new_file, chars_to_keep, years_required)
@@ -205,6 +242,10 @@ def get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_t
     province_data = save_provinces_data_in_numpy(array_dict)
     return provinces_data_to_autonomies_data(province_data, dict_autonomies_provinces())
 
+
+# funcion para pasar un float a una cadena con formato de moneda añadiendo los . de los miles y la , de los decimales
+#   float: valor a pasar a cadena
+#   decimals: numero de decimales a mostrar
 
 def float_to_formated_cad(float, decimals=2):
     locale.setlocale(locale.LC_ALL, '')

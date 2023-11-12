@@ -1,14 +1,7 @@
-import locale
 import matplotlib.pyplot as plt
-
 import numpy as np
-from bs4 import BeautifulSoup
-import certifi
-import ssl
-from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv, write_cleaned_csv, \
-    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, get_array_of_dict_keys, save_provinces_data_in_numpy, \
-    provinces_data_to_autonomies_data, dict_autonomies_provinces, get_dict_autonomies_with_provinces_data
-import csv
+
+from funciones import DIRECTORIO_FICHEROS, get_dict_autonomies_with_provinces_data
 
 # Variables globales para la lectura del css en R3
 FIRST_WORD = "02 Albacete"
@@ -85,8 +78,5 @@ def numpy_autonomies_array_sort_by_mean(dt, number_of_autonomies):
     return array_sorted
 
 
-# funcion para las columnas del html
-
-# fu
 # MAIN
 r3()
