@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import certifi
 import ssl
 from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv, write_cleaned_csv, \
-    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, get_array_of_dict_keys, list_autonomies_provinces, \
+    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, get_array_of_dict_keys, dict_autonomies_provinces, \
     provinces_data_to_autonomies_data, save_provinces_data_in_numpy, float_to_formated_cad
 import csv
 
@@ -29,7 +29,7 @@ def R2(file):
 
     array_dict = csv_to_array_dict(new_file, CHARS_TO_KEEP, YEARS_REQUIRED)
     province_data = save_provinces_data_in_numpy(array_dict)
-    list_autonomies = provinces_data_to_autonomies_data(province_data, list_autonomies_provinces())
+    list_autonomies = provinces_data_to_autonomies_data(province_data, dict_autonomies_provinces())
 
     cad = cad_list_data_autonomies(list_autonomies)
 

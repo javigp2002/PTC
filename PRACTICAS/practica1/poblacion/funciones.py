@@ -118,14 +118,11 @@ def csv_to_array_dict(file, chars_to_keep, years_required):
 
 
 # Devuelve en un array las tuplas de las comunidades autonomas con cada provincia
-def list_autonomies_provinces():
-    dict_valores_autonomias = {}
+def dict_autonomies_provinces():
+    dict_valores_autonomias = dict_autonomies()
 
-    # url = "https://www.ine.es/daco/daco42/codmun/cod_ccaa_provincia.htm"
-    # datos = urllib.request.urlopen(url).read()  # en utf8
-
-    comunidadesFich = open(DIRECTORIO_FICHEROS + 'comunidadAutonoma-Provincia.htm', 'r', encoding="utf8")
-    datos = comunidadesFich.read()
+    comunidades_provinces_fich = open(DIRECTORIO_FICHEROS + 'comunidadAutonoma-Provincia.htm', 'r', encoding="utf8")
+    datos = comunidades_provinces_fich.read()
 
     soup = BeautifulSoup(datos, 'html.parser')
     celdas = soup.find_all('tr')
@@ -137,14 +134,30 @@ def list_autonomies_provinces():
             autonomia = temp[1] + " " + temp[2]
             provincia = temp[3] + " " + temp[4]
 
-            if autonomia in dict_valores_autonomias:
-                temp_add = dict_valores_autonomias[autonomia]
-                temp_add.append(provincia)
-                dict_valores_autonomias[autonomia] = temp_add
-            else:
-                dict_valores_autonomias[autonomia] = [provincia]
+            temp_add = dict_valores_autonomias[autonomia]
+            temp_add.append(provincia)
+            dict_valores_autonomias[autonomia] = temp_add
 
     return dict_valores_autonomias
+
+#sacamos los valores de las autonomias del primer html
+def dict_autonomies():
+    dict_autonomies = {}
+    comunidades_fich = open(DIRECTORIO_FICHEROS + 'comunidadesAutonomas.htm', 'r', encoding="utf8")
+    datos = comunidades_fich.read()
+
+    soup = BeautifulSoup(datos, 'html.parser')
+    celdas = soup.find_all('tr')
+
+    # coge los valores de las celdas de 2 en 2
+    for celda in celdas:
+        temp = celda.get_text().split("\n")
+        if temp[1].isnumeric():
+            autonomy = temp[1] + " " + temp[2]
+            autonomy.replace(" - ", "-")
+            dict_autonomies[autonomy] = []
+
+    return dict_autonomies
 
 
 # funcion que dada una lista de diccionarios con las autonomias y sus provincias, y numpys con los datos de las provincias
@@ -189,7 +202,7 @@ def get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_t
     array_dict = csv_to_array_dict(new_file, chars_to_keep, years_required)
 
     province_data = save_provinces_data_in_numpy(array_dict)
-    return provinces_data_to_autonomies_data(province_data, list_autonomies_provinces())
+    return provinces_data_to_autonomies_data(province_data, dict_autonomies_provinces())
 
 def float_to_formated_cad(float):
     locale.setlocale(locale.LC_ALL, '')
