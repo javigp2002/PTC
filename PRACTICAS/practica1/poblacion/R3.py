@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from funciones import DIRECTORIO_FICHEROS, get_dict_autonomies_with_provinces_data
+from funciones import DIRECTORIO_ENTRADAS, get_dict_autonomies_with_provinces_data
 
 # Variables globales para la lectura del css en R3
 FIRST_WORD = "02 Albacete"
@@ -22,7 +22,7 @@ DIRECTORIO_IMAGENES = "imagenes/"
 
 SALIDAHTML = "poblacionComAutonomas.html"
 
-FILE_TO_READ = DIRECTORIO_FICHEROS + "poblacionProvinciasHM2010-17.csv"
+FILE_TO_READ = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 
 
 def r3():

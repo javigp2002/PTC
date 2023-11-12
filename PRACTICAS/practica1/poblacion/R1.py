@@ -4,10 +4,9 @@ R1. Calcular la variación de la población por provincias desde el año 2011 a 
  se puede observar en el siguiente ejemplo:
 """
 
-import csv
-import os
-import numpy as np
-from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv
+from funciones import write_cleaned_csv, \
+    write_html, DIRECTORIO_ENTRADAS, get_array_of_dict_keys, csv_to_array_dict, float_to_formated_cad, \
+    DIRECTORIO_RESULTADOS
 
 ## Funciones para el calculo de la poblacion
 variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
@@ -17,61 +16,88 @@ variacion_relativa = lambda poblacion, poblacion_anterior: (poblacion - poblacio
 FIRST_WORD = "Total Nacional"
 LAST_WORD = "Notas"
 
+# Variable para conocer los datos que queremos manterner entre (T) totales, (H) hombres y (M) mujeres
+CHARS_TO_KEEP = "T"
 
-# funcion para escribir el html con sus datos nuevos
-def write_html(file):
-    cad = csv_to_cleaned_cad(file, FIRST_WORD, LAST_WORD)
-    new_file = write_cad_to_csv(file, cad)
+# Variable cabecera
+CABECERA = ("Provincia;T2017;T2016;T2015;T2014;T2013;T2012;T2011;T2010;H2017;H2016;H2015;H2014;H2013;H2012;H2011"
+            ";H2010;M2017;M2016;M2015;M2014;M2013;M2012;M2011;M2010;\n")
 
-    years = get_years_csv(file)
-    number_of_years = len(years) - 1
+YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010']
+
+SALIDAHTML = DIRECTORIO_RESULTADOS + "variacionProvincias.html"
+
+"""
+Función
+"""
+
+
+def r1(file):
+    new_file = write_cleaned_csv(file, FIRST_WORD, LAST_WORD, CABECERA)
+
+    # leemos el csv limpio y lo pasamos a un array de diccionarios para luego tener una cadena con los datos en html
+    array_dict = csv_to_array_dict(new_file, CHARS_TO_KEEP, YEARS_REQUIRED)
+    cad = dict_to_cad_html(array_dict)
+
+    title = "Variación de la población por provincias"
+    tabla = th_table() + cad
+
+    write_html(SALIDAHTML, title, tabla)
+
+
+# funcion para las columnas del html
+def th_table():
+    years = YEARS_REQUIRED
+    number_of_years = len(years) - 1  # -1 para no coger el ultimo elemento que es el total
     number_of_years_str = str(number_of_years)
-    cad = read_final_csv(new_file, years)
 
-    with open("salidaR1.html", 'w', encoding='utf-8') as f:
-        f.write(html_start("Variación de la población por provincias"))
+    tabla = """<table>\n
+                <tr>\n
+                    <th></th> \n
+                    <th colspan=" """ + number_of_years_str + """"> Variación absoluta </th>\n
+                    <th colspan=" """ + number_of_years_str + """"> Variación relativa </th>\n
+                </tr>\n
+                <tr>\n
+                    <th> Provincia </th> \n"""
 
-        tabla = """<table>\n
-            <tr>\n
-                <th></th> \n
-                <th colspan=" """ + number_of_years_str + """"> Variación absoluta </th>\n
-                <th colspan=" """ + number_of_years_str + """"> Variación relativa </th>\n
-            </tr>\n
-            <tr>\n
-                <th> Provincia </th> \n"""
+    temp_cad_years = ""
+    for i in range(0, number_of_years):
+        tabla += """<th> """ + str(years[i]) + """ </th>\n"""
+        temp_cad_years += """<th> """ + str(years[i]) + """ </th>\n"""
 
-        for i in range(0, number_of_years):
-            tabla += """<th> """ + str(years[i]) + """ </th>\n"""
-        for i in range(0, number_of_years):
-            tabla += """<th> """ + str(years[i]) + """ </th>\n"""
+    tabla += temp_cad_years + "</tr>\n"
 
-        tabla += "</tr>\n"
-        tabla += cad
-        tabla += "</table>\n"
-        f.write(tabla)
-        f.write(html_end())
+    return tabla
 
 
-# funcion para leer el csv limpio y escribirlo en el html
-def read_final_csv(file, years):
-    number_years = (len(years) - 1)
+# funcion para dado un [] de diccionarios, devolver una cadena con los datos para tabla de variación absoluta y relativa
+def dict_to_cad_html(array_dict):
+    cad = ""
 
-    with open(file, encoding='utf-8') as f:
-        cad = ""
-        for rec in csv.reader(f, delimiter=';'):
-            cad += "<tr>"
-            cad += "<td>" + str(rec[0]) + "</td>"
-            for i in range(0, number_years):
-                cad += "<td>" + str(round(variacion_absoluta(float(rec[i + 1]), float(rec[i + 2])), 2)) + "</td>\n"
+    # cogemos los "keys" del primer diccionario para saber el orden de las columnas
+    if array_dict:
+        array_names = get_array_of_dict_keys(array_dict[0])
+    else:  # no puede imprimir nada si no hay datos
+        return cad
 
-            for i in range(0, number_years):
-                cad += "<td>" + str(round(variacion_relativa(float(rec[i + 1]), float(rec[i + 2])), 2)) + "</td>\n"
-            cad += "</tr>"
+    # recorremos el array de diccionarios y vamos escribiendo la cadena
+    for actual_dict in array_dict:
+        cad += "<tr> <td>" + actual_dict[array_names[0]] + "</td>\n"
+        cad_relative = ""
 
-    os.remove(file)
+        num_variations = len(array_names) - 1  # -1 para no coger el ultimo elemento que es el total
+        for i in range(1, num_variations):
+            a = float(actual_dict[array_names[i]])
+            b = float(actual_dict[array_names[i + 1]])
+            cad += "<td>" + float_to_formated_cad((variacion_absoluta(a, b), 2)) + "</td>\n"
+            cad_relative += ("<td>" + float_to_formated_cad(round(variacion_relativa(a, b), 2)) + "</td>\n")
+
+        cad += cad_relative
+        cad += "</tr>"
+    cad += "</table>\n"
     return cad
 
 
 # MAIN
-file = "entradas/poblacionProvinciasHM2010-17.csv"
-write_html(file)
+file = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
+r1(file)

@@ -6,7 +6,8 @@ import csv
 import numpy as np
 from bs4 import BeautifulSoup
 
-DIRECTORIO_FICHEROS = 'entradas/'
+DIRECTORIO_ENTRADAS = 'entradas/'
+DIRECTORIO_RESULTADOS = 'resultados/'
 
 
 #
@@ -23,7 +24,7 @@ def html_start(title):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>""" + title + """"</title>
-    <link rel="stylesheet" href="./entradas/estilo.css">
+    <link rel="stylesheet" href="../entradas/estilo.css">
   </head>
   <body>
 """
@@ -150,7 +151,7 @@ def csv_to_array_dict(file, chars_to_keep, years_required):
 def dict_autonomies_provinces():
     dict_valores_autonomias = dict_autonomies()
 
-    comunidades_provinces_fich = open(DIRECTORIO_FICHEROS + 'comunidadAutonoma-Provincia.htm', 'r', encoding="utf8")
+    comunidades_provinces_fich = open(DIRECTORIO_ENTRADAS + 'comunidadAutonoma-Provincia.htm', 'r', encoding="utf8")
     datos = comunidades_provinces_fich.read()
 
     soup = BeautifulSoup(datos, 'html.parser')
@@ -174,7 +175,7 @@ def dict_autonomies_provinces():
 # con un array vacio para meter las provincias posteriormente
 def dict_autonomies():
     dict_autonomies = {}
-    comunidades_fich = open(DIRECTORIO_FICHEROS + 'comunidadesAutonomas.htm', 'r', encoding="utf8")
+    comunidades_fich = open(DIRECTORIO_ENTRADAS + 'comunidadesAutonomas.htm', 'r', encoding="utf8")
     datos = comunidades_fich.read()
 
     soup = BeautifulSoup(datos, 'html.parser')

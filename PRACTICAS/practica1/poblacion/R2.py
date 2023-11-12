@@ -1,7 +1,7 @@
 from funciones import write_cleaned_csv, \
-    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, dict_autonomies_provinces, \
+    write_html, DIRECTORIO_ENTRADAS, csv_to_array_dict, dict_autonomies_provinces, \
     provinces_data_to_autonomies_data, save_provinces_data_in_numpy, float_to_formated_cad, \
-    get_dict_autonomies_with_provinces_data
+    get_dict_autonomies_with_provinces_data, DIRECTORIO_RESULTADOS
 
 # Variables globales para la lectura del css en R2
 FIRST_WORD = "02 Albacete"
@@ -13,7 +13,7 @@ CABECERA = ("Provincia;T2017;T2016;T2015;T2014;T2013;T2012;T2011;T2010;H2017;H20
 YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010']
 CHARS_TO_KEEP = "THM"
 
-SALIDAHTML = "poblacionComAutonomas.html"
+SALIDAHTML = DIRECTORIO_RESULTADOS + "poblacionComAutonomas.html"
 
 
 def R2(file):
@@ -72,5 +72,5 @@ def cad_list_data_autonomies(list_autonomies):
 
 
 # MAIN
-file = DIRECTORIO_FICHEROS + "poblacionProvinciasHM2010-17.csv"
+file = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 R2(file)
