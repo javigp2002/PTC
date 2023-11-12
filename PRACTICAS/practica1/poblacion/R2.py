@@ -1,15 +1,6 @@
-import locale
-import os
-import urllib.request
-
-import numpy as np
-from bs4 import BeautifulSoup
-import certifi
-import ssl
-from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv, write_cleaned_csv, \
-    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, get_array_of_dict_keys, dict_autonomies_provinces, \
+from funciones import write_cleaned_csv, \
+    write_html, DIRECTORIO_FICHEROS, csv_to_array_dict, dict_autonomies_provinces, \
     provinces_data_to_autonomies_data, save_provinces_data_in_numpy, float_to_formated_cad
-import csv
 
 # Variables globales para la lectura del css en R2
 FIRST_WORD = "02 Albacete"

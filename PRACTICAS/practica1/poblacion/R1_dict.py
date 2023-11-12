@@ -4,11 +4,8 @@ R1. Calcular la variación de la población por provincias desde el año 2011 a 
  se puede observar en el siguiente ejemplo:
 """
 
-import csv
-import os
-import numpy as np
-from funciones import html_start, html_end, csv_to_cleaned_cad, write_cad_to_csv, get_years_csv, write_cleaned_csv, \
-    write_html, DIRECTORIO_FICHEROS, get_array_of_dict_keys, clean_dict, csv_to_array_dict, float_to_formated_cad
+from funciones import write_cleaned_csv, \
+    write_html, DIRECTORIO_FICHEROS, get_array_of_dict_keys, csv_to_array_dict, float_to_formated_cad
 
 ## Funciones para el calculo de la poblacion
 variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
@@ -29,10 +26,11 @@ YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010'
 
 SALIDAHTML = "variacionProvincias.html"
 
-
 """
 Función
 """
+
+
 def r1(file):
     new_file = write_cleaned_csv(file, FIRST_WORD, LAST_WORD, CABECERA)
 
@@ -70,6 +68,7 @@ def th_table():
 
     return tabla
 
+
 # funcion para dado un [] de diccionarios, devolver una cadena con los datos para tabla de variación absoluta y relativa
 def dict_to_cad_html(array_dict):
     cad = ""
@@ -96,9 +95,6 @@ def dict_to_cad_html(array_dict):
         cad += "</tr>"
     cad += "</table>\n"
     return cad
-
-
-
 
 
 # MAIN
