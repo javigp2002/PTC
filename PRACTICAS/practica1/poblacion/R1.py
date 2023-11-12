@@ -6,11 +6,7 @@ R1. Calcular la variación de la población por provincias desde el año 2011 a 
 
 from funciones import write_cleaned_csv, \
     write_html, DIRECTORIO_ENTRADAS, get_array_of_dict_keys, csv_to_array_dict, float_to_formated_cad, \
-    DIRECTORIO_RESULTADOS
-
-## Funciones para el calculo de la poblacion
-variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
-variacion_relativa = lambda poblacion, poblacion_anterior: (poblacion - poblacion_anterior) / poblacion_anterior * 100
+    DIRECTORIO_RESULTADOS, variacion_absoluta, variacion_relativa
 
 # Variables globales para la lectura del css en R1
 FIRST_WORD = "Total Nacional"
@@ -27,9 +23,8 @@ YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010'
 
 SALIDAHTML = DIRECTORIO_RESULTADOS + "variacionProvincias.html"
 
-"""
-Función
-"""
+DECIMALS_TO_SHOW = 2
+
 
 
 def r1(file):
@@ -89,8 +84,9 @@ def dict_to_cad_html(array_dict):
         for i in range(1, num_variations):
             a = float(actual_dict[array_names[i]])
             b = float(actual_dict[array_names[i + 1]])
-            cad += "<td>" + float_to_formated_cad((variacion_absoluta(a, b), 2)) + "</td>\n"
-            cad_relative += ("<td>" + float_to_formated_cad(round(variacion_relativa(a, b), 2)) + "</td>\n")
+            cad += "<td>" + float_to_formated_cad((variacion_absoluta(a, b), DECIMALS_TO_SHOW)) + "</td>\n"
+            cad_relative += ("<td>" + float_to_formated_cad(round(variacion_relativa(a, b), DECIMALS_TO_SHOW)) +
+                             "</td>\n")
 
         cad += cad_relative
         cad += "</tr>"

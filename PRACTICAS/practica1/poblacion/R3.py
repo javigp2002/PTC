@@ -1,7 +1,14 @@
+"""
+R3.
+R3. Usando Matplotlib, para las 10 comunidades con más población media de 2010 a 2017, generar un gráfico de columnas
+que indique la población de hombres y mujeres en el año 2017, salvar el gráfico a fichero e incorporarlo a la
+página web 2 del punto R2.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-from funciones import DIRECTORIO_ENTRADAS, get_dict_autonomies_with_provinces_data
+from funciones import DIRECTORIO_ENTRADAS, get_dict_autonomies_with_provinces_data, array_comunities_without_code
 
 # Variables globales para la lectura del css en R3
 FIRST_WORD = "02 Albacete"
@@ -26,13 +33,13 @@ FILE_TO_READ = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 
 
 def r3():
-    dt = np.dtype([('mean', np.float64), ('name', np.unicode_, 40)])
-    array_autonomies_name_sorted = numpy_autonomies_array_sort_by_mean(dt, NUMBER_AUTONOMIES)
-
     dict_autonomies_graph = get_dict_autonomies_with_provinces_data(FILE_TO_READ, FIRST_WORD, LAST_WORD,
                                                                     CHAR_TO_KEEP_GRAPH, YEARS_POBLATION_GRAPH, CABECERA)
 
+    dt = np.dtype([('mean', np.float64), ('name', np.unicode_, 40)])
+    array_autonomies_name_sorted = numpy_autonomies_array_sort_by_mean(dt, NUMBER_AUTONOMIES)
     etiquetas = array_autonomies_name_sorted
+
 
     men = []
     woman = []
@@ -50,10 +57,11 @@ def r3():
     axes.bar(co + an / 2, woman, an, label='Mujeres')
 
     axes.set_title('Población por comunidades autónomas')
+    plt.legend(["Hombres", "Mujeres"])
     axes.set_ylabel('Población')
     axes.set_xlabel('Comunidades autónomas')
     axes.set_xticks(co)
-    axes.set_xticklabels(etiquetas)
+    axes.set_xticklabels(array_comunities_without_code(etiquetas))
     fig.autofmt_xdate(rotation=45)
     plt.savefig(DIRECTORIO_IMAGENES + 'R3.png', bbox_inches='tight')
 
@@ -76,6 +84,7 @@ def numpy_autonomies_array_sort_by_mean(dt, number_of_autonomies):
     # coger solo los valores 'name' de las 10 primeras autonomias
     array_sorted = array_sorted[:number_of_autonomies]['name']
     return array_sorted
+
 
 
 # MAIN

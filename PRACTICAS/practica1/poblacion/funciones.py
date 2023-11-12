@@ -55,6 +55,10 @@ def write_html(file, title, body):
         f.write(body)
         f.write(html_end())
 
+## Funciones para el calculo de la poblacion de Variación absoluta y relativa según sus formulas
+variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
+variacion_relativa = lambda poblacion, poblacion_anterior: (poblacion - poblacion_anterior) / poblacion_anterior * 100
+
 
 # Convierte el csv a una cadena con los datos necesarios dado una primera y ultima palabra a buscar
 #  file: fichero csv
@@ -71,6 +75,7 @@ def csv_to_cleaned_cad(file, first_word, last_word):
 
     return cad[first:last]
 
+
 # Crea el fichero csv desde una cadena y devolvemos el nombre del nuevo archivo
 def write_cad_to_csv(csv, cad, cabecera=""):
     # modificar la ultima parte del path
@@ -84,14 +89,12 @@ def write_cad_to_csv(csv, cad, cabecera=""):
     return new_csv
 
 
-
 # Escribe un csv con los datos limpios y devolvemos el nombre del nuevo archivo
 def write_cleaned_csv(file, first_word, last_word, cabecera=""):
     cad = csv_to_cleaned_cad(file, first_word, last_word)
     new_file = write_cad_to_csv(file, cad, cabecera)
 
     return new_file
-
 
 
 # Dado un csv genérico de la Junta recoge los años en los que este contiene los datos
@@ -251,3 +254,12 @@ def get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_t
 def float_to_formated_cad(float, decimals=2):
     locale.setlocale(locale.LC_ALL, '')
     return locale.format_string('%.' + str(decimals) + 'f', float, grouping=True)
+
+
+# funcion para devolver el nombre de las comunidades autónomas sin el código
+def array_comunities_without_code(array_with_codes):
+    new_array_without_codes = []
+    for autonomy in array_with_codes:
+        new_array_without_codes.append(autonomy[2::])
+
+    return new_array_without_codes

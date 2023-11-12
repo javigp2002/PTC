@@ -1,3 +1,13 @@
+"""
+R2.
+R2. Usando el listado de comunidades autónomas que podemos obtener del fichero
+comunidadesAutonomas.html, así como de las provincias de cada comunidad autónoma que podemos obtener de
+comunidadAutonoma-Provincia.html y los datos de poblacionProvinciasHM2010-17.csv, hay que generar una
+página web 2 (fichero poblacionComAutonomas.html) con una tabla con los valores de población de cada comunidad
+autónoma en cada año de 2010 a 2017, indicando también los valores desagregados por sexos (de manera semejante
+a como aparece en la siguiente figura). Las celdas deben tener el contenido centrado.
+"""
+
 from funciones import write_cleaned_csv, \
     write_html, DIRECTORIO_ENTRADAS, csv_to_array_dict, dict_autonomies_provinces, \
     provinces_data_to_autonomies_data, save_provinces_data_in_numpy, float_to_formated_cad, \
@@ -14,6 +24,7 @@ YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010'
 CHARS_TO_KEEP = "THM"
 
 SALIDAHTML = DIRECTORIO_RESULTADOS + "poblacionComAutonomas.html"
+DECIMALS_TO_SHOW = 0
 
 
 def R2(file):
@@ -62,7 +73,7 @@ def cad_list_data_autonomies(list_autonomies):
         number_of_data = len(list_autonomies[autonomy])
 
         for i in range(1, number_of_data):
-            cad += "<td>" + float_to_formated_cad(list_autonomies[autonomy][i], 0) + "</td>\n"
+            cad += "<td>" + float_to_formated_cad(list_autonomies[autonomy][i], DECIMALS_TO_SHOW) + "</td>\n"
 
         cad += "</tr>\n"
 
