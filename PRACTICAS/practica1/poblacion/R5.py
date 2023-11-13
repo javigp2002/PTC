@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from funciones import DIRECTORIO_ENTRADAS, get_dict_autonomies_with_provinces_data, array_comunities_without_code, \
-    numpy_autonomies_array_sort_by_mean
+    numpy_autonomies_array_sort_by_mean, obtener_etiqueta_array_dict_for_graph, include_graph_in_html, \
+    DIRECTORIO_RESULTADOS, DIRECTORIO_IMAGENES
 
 # Variables globales para la lectura del css en R3
 FIRST_WORD = "02 Albacete"
@@ -27,27 +28,28 @@ CHAR_TO_KEEP_GRAPH = "T"
 NUMBER_AUTONOMIES = 10
 
 # Variable directorio
-DIRECTORIO_IMAGENES = "imagenes/"
 
-SALIDAHTML = "poblacionComAutonomas.html"
+SALIDAHTML = DIRECTORIO_RESULTADOS + "variacionComAutonomas.html"
 
 FILE_TO_READ = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 
 
 def r5():
-    dict_autonomies_graph = get_dict_autonomies_with_provinces_data(FILE_TO_READ, FIRST_WORD, LAST_WORD,
-                                                                    CHAR_TO_KEEP_GRAPH, YEARS_POBLATION_GRAPH, CABECERA)
+    array_autonomies_name_sorted, dict_autonomies_graph = obtener_etiqueta_array_dict_for_graph(FILE_TO_READ,
+                                                                                                FIRST_WORD, LAST_WORD,
+                                                                                                CHARS_TO_KEEP,
+                                                                                                CHAR_TO_KEEP_GRAPH,
+                                                                                                YEARS_REQUIRED,
+                                                                                                YEARS_POBLATION_GRAPH,
+                                                                                                CABECERA,
+                                                                                                NUMBER_AUTONOMIES)
 
-    dt = np.dtype([('mean', np.float64), ('name', np.unicode_, 40)])
-    dict_autonomies = get_dict_autonomies_with_provinces_data(FILE_TO_READ, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
-                                                              YEARS_REQUIRED, CABECERA)
-    array_autonomies_name_sorted = numpy_autonomies_array_sort_by_mean(dt, NUMBER_AUTONOMIES, dict_autonomies)
-    etiquetas = array_autonomies_name_sorted
+    directorio_archivo = lineal_graph(YEARS_POBLATION_GRAPH, dict_autonomies_graph, array_autonomies_name_sorted)
+    include_graph_in_html(SALIDAHTML, "../" + directorio_archivo)
 
 
-    #Barras que se ponen
-
-
+# funcion para guardar el grafico de lineas, devuelve la ubicacion del archivo
+def lineal_graph(x_ticks, dict_autonomies_graph, array_autonomies_name_sorted):
     plt.figure("lineal")
     plt.title("Población total en 2010-2017 (CCAA)")  # Establece el título del gráfico
     for autonomy in array_autonomies_name_sorted:
@@ -56,15 +58,10 @@ def r5():
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
     plt.xticks(np.arange(len(YEARS_POBLATION_GRAPH)), YEARS_POBLATION_GRAPH)
-
-
-
-
+    directorio_archivo = DIRECTORIO_IMAGENES + "R5.png"
     plt.savefig(DIRECTORIO_IMAGENES + 'R5.png', bbox_inches='tight')
 
-
-
-
+    return directorio_archivo
 
 
 # MAIN

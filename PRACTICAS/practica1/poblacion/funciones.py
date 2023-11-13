@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 DIRECTORIO_ENTRADAS = 'entradas/'
 DIRECTORIO_RESULTADOS = 'resultados/'
+DIRECTORIO_IMAGENES = "imagenes/"
 
 
 #
@@ -238,14 +239,14 @@ def save_provinces_data_in_numpy(array_dict):
 
 # Funcion para, dado un fichero csv, una primera y ultima palabra a buscar, los caracteres a mantener y la cabecera
 #   Devolver un diccionario con cada autonomia y sus datos en un numpy
-#
+#   Devolver el array_dict con los datos de las provincias para ser reutilizado
 # Esta función se utiliza para no repetir codigo en los distintos R
 def get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_to_keep, years_required, cabecera):
     new_file = write_cleaned_csv(file, first_word, last_word, cabecera)
     array_dict = csv_to_array_dict(new_file, chars_to_keep, years_required)
 
     province_data = save_provinces_data_in_numpy(array_dict)
-    return provinces_data_to_autonomies_data(province_data, dict_autonomies_provinces())
+    return provinces_data_to_autonomies_data(province_data, dict_autonomies_provinces()), array_dict
 
 
 # funcion para pasar un float a una cadena con formato de moneda añadiendo los . de los miles y la , de los decimales
@@ -282,3 +283,44 @@ def numpy_autonomies_array_sort_by_mean(dt, number_of_autonomies, dict_autonomie
     # coger solo los valores 'name' de las 10 primeras autonomias
     array_sorted = array_sorted[:number_of_autonomies]['name']
     return array_sorted
+
+
+# Funcion
+#   file: fichero csv a sacar la información
+#   first_word: primera palabra a buscar en el csv
+#   last_word: ultima palabra a buscar en el csv
+#   chars_to_keep: caracteres a mantener en el csv para mantener hacer la media de los datos
+#   years_required: años a mantener en el csv para hacer la media de los datos
+#   cabecera: cabecera del csv
+#   number_of_autonomies: numero de autonomias que se quieren mostrar en el grafico
+# Devuelve:
+# - el array de autonomias con los nombres de las provincias
+# - el diccionario con los datos del grafico
+def obtener_etiqueta_array_dict_for_graph(file, first_word, last_word, chars_to_keep,
+                                          chars_to_keep_graph, years_required, years_poblation_graph, cabecera,
+                                          number_of_autonomies):
+    dict_autonomies_graph, array_dict = get_dict_autonomies_with_provinces_data(file, first_word, last_word,
+                                                                                chars_to_keep_graph,
+                                                                                years_poblation_graph, cabecera)
+
+    dt = np.dtype([('mean', np.float64), ('name', np.unicode_, 40)])
+    dict_autonomies, array_dict = get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_to_keep,
+                                                                          years_required, cabecera)
+    array_autonomies_name_sorted = numpy_autonomies_array_sort_by_mean(dt, number_of_autonomies, dict_autonomies)
+
+    return array_autonomies_name_sorted, dict_autonomies_graph
+
+
+# funcion para incluir el gráfico en el html, para ello buscamo '</body>' y en la linea de antes incluimos el gráfico
+
+def include_graph_in_html(html, directorio_archivo):
+    # buscamos la linea donde incluir el gráfico
+    with open(html, "a+") as f:
+        f.seek(0)  # cursor al principio
+        # leemos cada linea del html
+        for line in f:
+            if line.find("</body>") != -1:
+                # si encontramos la linea, escribimos el gráfico
+                f.write("<img src='" + directorio_archivo + "' alt='GrAfico de barras de la población por comunidades "
+                                                            "autonomas'>\n")
+                break

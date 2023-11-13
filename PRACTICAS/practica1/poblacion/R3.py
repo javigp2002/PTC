@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from funciones import DIRECTORIO_ENTRADAS, get_dict_autonomies_with_provinces_data, array_comunities_without_code, \
-    numpy_autonomies_array_sort_by_mean
+    numpy_autonomies_array_sort_by_mean, obtener_etiqueta_array_dict_for_graph, DIRECTORIO_RESULTADOS, \
+    include_graph_in_html, DIRECTORIO_IMAGENES
 
 # Variables globales para la lectura del css en R3
 FIRST_WORD = "02 Albacete"
@@ -25,24 +26,21 @@ YEARS_POBLATION_GRAPH = ['2017']
 CHAR_TO_KEEP_GRAPH = "HM"
 NUMBER_AUTONOMIES = 10
 
-# Variable directorio
-DIRECTORIO_IMAGENES = "imagenes/"
-
-SALIDAHTML = "poblacionComAutonomas.html"
+SALIDAHTML = DIRECTORIO_RESULTADOS + "poblacionComAutonomas.html"
 
 FILE_TO_READ = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 
 
 def r3():
-    dict_autonomies_graph = get_dict_autonomies_with_provinces_data(FILE_TO_READ, FIRST_WORD, LAST_WORD,
-                                                                    CHAR_TO_KEEP_GRAPH, YEARS_POBLATION_GRAPH, CABECERA)
-
-    dt = np.dtype([('mean', np.float64), ('name', np.unicode_, 40)])
-    dict_autonomies = get_dict_autonomies_with_provinces_data(FILE_TO_READ, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
-                                                              YEARS_REQUIRED, CABECERA)
-    array_autonomies_name_sorted = numpy_autonomies_array_sort_by_mean(dt, NUMBER_AUTONOMIES, dict_autonomies)
+    array_autonomies_name_sorted, dict_autonomies_graph = obtener_etiqueta_array_dict_for_graph(FILE_TO_READ,
+                                                                                                FIRST_WORD, LAST_WORD,
+                                                                                                CHARS_TO_KEEP,
+                                                                                                CHAR_TO_KEEP_GRAPH,
+                                                                                                YEARS_REQUIRED,
+                                                                                                YEARS_POBLATION_GRAPH,
+                                                                                                CABECERA,
+                                                                                                NUMBER_AUTONOMIES)
     etiquetas = array_autonomies_name_sorted
-
 
     men = []
     woman = []
@@ -50,12 +48,19 @@ def r3():
         men.append(dict_autonomies_graph[autonomy][1])
         woman.append(dict_autonomies_graph[autonomy][2])
 
-    co = np.arange(len(etiquetas))
+    directorio_archivo = save_bar_graph(etiquetas, men, woman)
+    include_graph_in_html(SALIDAHTML, "../" + directorio_archivo)
+
+
+# funcion que realiza el gráfico de barras de la población media por comunidades autónomas
+# Devuelve la ubicación png del gráfico
+def save_bar_graph(etiquette, men, woman):
+    co = np.arange(len(etiquette))
     an = 0.35
 
     fig, axes = plt.subplots()
 
-    #Barras que se ponen
+    # Barras que se ponen
     axes.bar(co - an / 2, men, an, label='Hombres')
     axes.bar(co + an / 2, woman, an, label='Mujeres')
 
@@ -64,12 +69,13 @@ def r3():
     axes.set_ylabel('Población')
     axes.set_xlabel('Comunidades autónomas')
     axes.set_xticks(co)
-    axes.set_xticklabels(array_comunities_without_code(etiquetas))
+    axes.set_xticklabels(array_comunities_without_code(etiquette))
     fig.autofmt_xdate(rotation=45)
-    plt.savefig(DIRECTORIO_IMAGENES + 'R3.png', bbox_inches='tight')
 
+    directorio_archivo = DIRECTORIO_IMAGENES + 'R3.png'
+    plt.savefig(directorio_archivo, bbox_inches='tight')
 
-
+    return directorio_archivo
 
 
 # MAIN

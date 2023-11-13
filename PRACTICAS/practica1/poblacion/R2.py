@@ -28,14 +28,12 @@ DECIMALS_TO_SHOW = 0
 
 
 def R2(file):
-    dict_autonomies = get_dict_autonomies_with_provinces_data(file, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
+    dict_autonomies, array_dict = get_dict_autonomies_with_provinces_data(file, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
                                                               YEARS_REQUIRED, CABECERA)
 
     cad = cad_list_data_autonomies(dict_autonomies)
 
-    tabla = th_table(YEARS_REQUIRED) + cad
-
-    body = tabla + "<img src='imagenes/R3.png' alt='Gráfico de barras de la población por comunidades autónomas'>\n"
+    body = th_table(YEARS_REQUIRED) + cad
 
     title = "Variación de la población por comunidades autónomas"
     write_html(SALIDAHTML, title, body)

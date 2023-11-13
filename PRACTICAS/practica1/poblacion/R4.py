@@ -29,8 +29,9 @@ DECIMALS_TO_SHOW = 2
 
 def r4(file):
     new_file = write_cleaned_csv(file, FIRST_WORD, LAST_WORD, CABECERA)
-    dict_comunities = get_dict_autonomies_with_provinces_data(new_file, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
-                                                              YEARS_REQUIRED, CABECERA)
+    dict_comunities, array_dict = get_dict_autonomies_with_provinces_data(new_file, FIRST_WORD, LAST_WORD,
+                                                                          CHARS_TO_KEEP,
+                                                                          YEARS_REQUIRED, CABECERA)
 
     title = "Variaciones de la comunidades por sexos"
 
