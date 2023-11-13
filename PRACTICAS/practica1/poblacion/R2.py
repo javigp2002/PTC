@@ -26,7 +26,7 @@ SALIDAHTML = DIRECTORIO_RESULTADOS + "poblacionComAutonomas.html"
 DECIMALS_TO_SHOW = 0
 
 
-def r2(file):
+def r2():
     dict_autonomies = get_dict_autonomies_with_provinces_data(FILE, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
                                                               YEARS_REQUIRED, CABECERA)
 
