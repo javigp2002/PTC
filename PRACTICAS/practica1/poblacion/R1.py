@@ -94,5 +94,9 @@ def dict_to_cad_html(array_dict):
     return cad
 
 
-# MAIN
-r1()
+if __name__ == "R1":  # Cada vez que lo importe se ejecutará  lo que esté aquí dentro
+    print("Importando y ejecutando R1.py")
+    r1()
+
+if __name__ == "__main__":  # Si lo ejecuto como fichero principal, se ejecuta lo que hay aquí dentro
+    r1()

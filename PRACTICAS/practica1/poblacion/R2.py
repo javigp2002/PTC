@@ -79,5 +79,9 @@ def cad_list_data_autonomies(list_autonomies):
     return cad
 
 
-# MAIN
-r2()
+if __name__ == "R2":  # Cada vez que lo importe se ejecutará  lo que esté aquí dentro
+    print("Importando y ejecutando R2.py")
+    r2()
+
+if __name__ == "__main__":  # Si lo ejecuto como fichero principal, se ejecuta lo que hay aquí dentro
+    r2()

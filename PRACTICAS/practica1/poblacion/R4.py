@@ -126,5 +126,9 @@ def cad_absolute_relative_autonomy(start, end, dict, array_names, autonomy, cad_
     return cad_absolute, cad_relative
 
 
-# MAIN
-r4()
+if __name__ == "R4":  # Cada vez que lo importe se ejecutará  lo que esté aquí dentro
+    print("Importando y ejecutando R4.py")
+    r4()
+
+if __name__ == "__main__":  # Si lo ejecuto como fichero principal, se ejecuta lo que hay aquí dentro
+    r4()

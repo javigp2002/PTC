@@ -65,5 +65,9 @@ def lineal_graph(x_ticks, dict_autonomies_graph, array_autonomies_name_sorted):
     return directorio_archivo
 
 
-# MAIN
-r5()
+if __name__ == "R5":  # Cada vez que lo importe se ejecutará  lo que esté aquí dentro
+    print("Importando y ejecutando R5.py")
+    r5()
+
+if __name__ == "__main__":  # Si lo ejecuto como fichero principal, se ejecuta lo que hay aquí dentro
+    r5()

@@ -79,5 +79,9 @@ def save_bar_graph(etiquette, men, woman):
     return directorio_archivo
 
 
-# MAIN
-r3()
+if __name__ == "R3":  # Cada vez que lo importe se ejecutará  lo que esté aquí dentro
+    print("Importando y ejecutando R3.py")
+    r3()
+
+if __name__ == "__main__":  # Si lo ejecuto como fichero principal, se ejecuta lo que hay aquí dentro
+    r3()
