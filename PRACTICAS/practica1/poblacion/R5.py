@@ -1,8 +1,9 @@
 """
-R3.
-R3. Usando Matplotlib, para las 10 comunidades con más población media de 2010 a 2017, generar un gráfico de columnas
-que indique la población de hombres y mujeres en el año 2017, salvar el gráfico a fichero e incorporarlo a la
-página web 2 del punto R2.
+R5. Usando Matplotlib, para las 10 comunidades elegidas en el punto R3 generar un
+gráfico de líneas que refleje la evolución de la población total de cada comunidad
+autónoma desde el año 2010 a 2017, salvar el gráfico a fichero e incorporarlo a la
+página web 3 del punto R4.
+
 """
 
 import matplotlib.pyplot as plt
@@ -21,8 +22,8 @@ YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010'
 CHARS_TO_KEEP = "T"
 
 # Variables globales para el gráfico de R3
-YEARS_POBLATION_GRAPH = ['2017']
-CHAR_TO_KEEP_GRAPH = "HM"
+YEARS_POBLATION_GRAPH = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010']
+CHAR_TO_KEEP_GRAPH = "T"
 NUMBER_AUTONOMIES = 10
 
 # Variable directorio
@@ -33,7 +34,7 @@ SALIDAHTML = "poblacionComAutonomas.html"
 FILE_TO_READ = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 
 
-def r3():
+def r5():
     dict_autonomies_graph = get_dict_autonomies_with_provinces_data(FILE_TO_READ, FIRST_WORD, LAST_WORD,
                                                                     CHAR_TO_KEEP_GRAPH, YEARS_POBLATION_GRAPH, CABECERA)
 
@@ -44,33 +45,27 @@ def r3():
     etiquetas = array_autonomies_name_sorted
 
 
-    men = []
-    woman = []
-    for autonomy in array_autonomies_name_sorted:
-        men.append(dict_autonomies_graph[autonomy][1])
-        woman.append(dict_autonomies_graph[autonomy][2])
-
-    co = np.arange(len(etiquetas))
-    an = 0.35
-
-    fig, axes = plt.subplots()
-
     #Barras que se ponen
-    axes.bar(co - an / 2, men, an, label='Hombres')
-    axes.bar(co + an / 2, woman, an, label='Mujeres')
 
-    axes.set_title('Población por comunidades autónomas')
-    plt.legend(["Hombres", "Mujeres"])
-    axes.set_ylabel('Población')
-    axes.set_xlabel('Comunidades autónomas')
-    axes.set_xticks(co)
-    axes.set_xticklabels(array_comunities_without_code(etiquetas))
-    fig.autofmt_xdate(rotation=45)
-    plt.savefig(DIRECTORIO_IMAGENES + 'R3.png', bbox_inches='tight')
+
+    plt.figure("lineal")
+    plt.title("Población total en 2010-2017 (CCAA)")  # Establece el título del gráfico
+    for autonomy in array_autonomies_name_sorted:
+        plt.plot(dict_autonomies_graph[autonomy][1::], marker="o", label=autonomy)
+
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+    plt.xticks(np.arange(len(YEARS_POBLATION_GRAPH)), YEARS_POBLATION_GRAPH)
+
+
+
+
+    plt.savefig(DIRECTORIO_IMAGENES + 'R5.png', bbox_inches='tight')
+
 
 
 
 
 
 # MAIN
-r3()
+r5()

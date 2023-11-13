@@ -55,6 +55,7 @@ def write_html(file, title, body):
         f.write(body)
         f.write(html_end())
 
+
 ## Funciones para el calculo de la poblacion de Variación absoluta y relativa según sus formulas
 variacion_absoluta = lambda poblacion, poblacion_anterior: poblacion - poblacion_anterior
 variacion_relativa = lambda poblacion, poblacion_anterior: (poblacion - poblacion_anterior) / poblacion_anterior * 100
@@ -263,3 +264,21 @@ def array_comunities_without_code(array_with_codes):
         new_array_without_codes.append(autonomy[2::])
 
     return new_array_without_codes
+
+
+############################ R3 Y R5 ############################
+# Dado el fichero de csv con su cabecera y limpio de datos innecesarios, devuelve el array con el nombre de las comunidades
+# autonomas según la media de población
+def numpy_autonomies_array_sort_by_mean(dt, number_of_autonomies, dict_autonomies):
+    array_top_provinces_poblation_mean = np.array([], dtype=dt)
+
+    for autonomy in dict_autonomies:
+        array_top_provinces_poblation_mean = np.append(array_top_provinces_poblation_mean,
+                                                       np.array([(dict_autonomies[autonomy].mean(), autonomy)],
+                                                                dtype=dt))
+
+    # print(array_top_provinces_poblation_mean)
+    array_sorted = np.sort(array_top_provinces_poblation_mean, order='mean')[::-1]
+    # coger solo los valores 'name' de las 10 primeras autonomias
+    array_sorted = array_sorted[:number_of_autonomies]['name']
+    return array_sorted

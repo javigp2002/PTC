@@ -89,11 +89,11 @@ def dict_to_cad_html(dict):
         cad_relative = ""
 
         cad_absolute, cad_relative = cad_absolute_relative_autonomy(1, num_years // 2, dict, array_names,
-                                                                    num_years, autonomy, cad_absolute, cad_relative)
+                                                                    autonomy, cad_absolute, cad_relative)
 
         cad_absolute, cad_relative = cad_absolute_relative_autonomy(num_years // 2 + 1, num_years - 1, dict,
                                                                     array_names,
-                                                                    num_years, autonomy, cad_absolute, cad_relative)
+                                                                    autonomy, cad_absolute, cad_relative)
 
         cad += cad_absolute + cad_relative
         cad += "</tr>"
@@ -101,7 +101,19 @@ def dict_to_cad_html(dict):
     return cad
 
 
-def cad_absolute_relative_autonomy(start, end, dict, array_names, num_years, autonomy, cad_absolute, cad_relative):
+# Dados:
+#  - start: inicio para recorrer el numpy de la autonomia
+#  - end: final para recorrer el numpy de la autonomia
+#  - dict: diccionario con los datos de las autonomias
+#  - array_names: array con los nombres de las autonomias
+#  - autonomy: autonomia que se esta recorriendo
+#  - cad_absolute: cadena con los datos de la variacion absoluta
+#  - cad_relative: cadena con los datos de la variacion relativa
+#
+# Devuelve:
+#  - cad_absolute: cadena con los nuevos y antiguos datos de la variacion absoluta
+#  - cad_relative: cadena con los nuevos y antiguos datos de la variacion relativa
+def cad_absolute_relative_autonomy(start, end, dict, array_names, autonomy, cad_absolute, cad_relative):
     for i in range(start, end):
         a = float(dict[array_names[autonomy]][i])
         b = float(dict[array_names[autonomy]][i + 1])
