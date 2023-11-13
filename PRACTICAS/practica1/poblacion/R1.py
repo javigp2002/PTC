@@ -21,14 +21,14 @@ CABECERA = ("Provincia;T2017;T2016;T2015;T2014;T2013;T2012;T2011;T2010;H2017;H20
 
 YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010']
 
+FILE = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 SALIDAHTML = DIRECTORIO_RESULTADOS + "variacionProvincias.html"
 
 DECIMALS_TO_SHOW = 2
 
 
-
-def r1(file):
-    new_file = write_cleaned_csv(file, FIRST_WORD, LAST_WORD, CABECERA)
+def r1():
+    new_file = write_cleaned_csv(FILE, FIRST_WORD, LAST_WORD, CABECERA)
 
     # leemos el csv limpio y lo pasamos a un array de diccionarios para luego tener una cadena con los datos en html
     array_dict = csv_to_array_dict(new_file, CHARS_TO_KEEP, YEARS_REQUIRED)
@@ -95,5 +95,4 @@ def dict_to_cad_html(array_dict):
 
 
 # MAIN
-file = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
-r1(file)
+r1()

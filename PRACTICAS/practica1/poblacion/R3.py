@@ -8,8 +8,8 @@ página web 2 del punto R2.
 import matplotlib.pyplot as plt
 import numpy as np
 
-from funciones import DIRECTORIO_ENTRADAS, get_dict_autonomies_with_provinces_data, array_comunities_without_code, \
-    numpy_autonomies_array_sort_by_mean, obtener_etiqueta_array_dict_for_graph, DIRECTORIO_RESULTADOS, \
+from funciones import DIRECTORIO_ENTRADAS, array_comunities_without_code, \
+    obtener_etiqueta_array_dict_for_graph, DIRECTORIO_RESULTADOS, \
     include_graph_in_html, DIRECTORIO_IMAGENES
 
 # Variables globales para la lectura del css en R3
@@ -49,7 +49,8 @@ def r3():
         woman.append(dict_autonomies_graph[autonomy][2])
 
     directorio_archivo = save_bar_graph(etiquetas, men, woman)
-    include_graph_in_html(SALIDAHTML, "../" + directorio_archivo)
+    include_graph_in_html(SALIDAHTML, "../" + directorio_archivo, "Grafico de barras de la  media de "
+                                                                  "población total")
 
 
 # funcion que realiza el gráfico de barras de la población media por comunidades autónomas

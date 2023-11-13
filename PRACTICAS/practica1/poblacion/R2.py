@@ -8,9 +8,7 @@ autónoma en cada año de 2010 a 2017, indicando también los valores desagregad
 a como aparece en la siguiente figura). Las celdas deben tener el contenido centrado.
 """
 
-from funciones import write_cleaned_csv, \
-    write_html, DIRECTORIO_ENTRADAS, csv_to_array_dict, dict_autonomies_provinces, \
-    provinces_data_to_autonomies_data, save_provinces_data_in_numpy, float_to_formated_cad, \
+from funciones import write_html, DIRECTORIO_ENTRADAS, float_to_formated_cad, \
     get_dict_autonomies_with_provinces_data, DIRECTORIO_RESULTADOS
 
 # Variables globales para la lectura del css en R2
@@ -23,12 +21,13 @@ CABECERA = ("Provincia;T2017;T2016;T2015;T2014;T2013;T2012;T2011;T2010;H2017;H20
 YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010']
 CHARS_TO_KEEP = "THM"
 
+FILE = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 SALIDAHTML = DIRECTORIO_RESULTADOS + "poblacionComAutonomas.html"
 DECIMALS_TO_SHOW = 0
 
 
-def R2(file):
-    dict_autonomies, array_dict = get_dict_autonomies_with_provinces_data(file, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
+def r2(file):
+    dict_autonomies = get_dict_autonomies_with_provinces_data(FILE, FIRST_WORD, LAST_WORD, CHARS_TO_KEEP,
                                                               YEARS_REQUIRED, CABECERA)
 
     cad = cad_list_data_autonomies(dict_autonomies)
@@ -81,5 +80,4 @@ def cad_list_data_autonomies(list_autonomies):
 
 
 # MAIN
-file = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
-R2(file)
+r2()

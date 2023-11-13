@@ -45,7 +45,8 @@ def r5():
                                                                                                 NUMBER_AUTONOMIES)
 
     directorio_archivo = lineal_graph(YEARS_POBLATION_GRAPH, dict_autonomies_graph, array_autonomies_name_sorted)
-    include_graph_in_html(SALIDAHTML, "../" + directorio_archivo)
+    include_graph_in_html(SALIDAHTML, "../" + directorio_archivo, "Grafico de lineas de la "
+                                                                   "poblacion por comunidad")
 
 
 # funcion para guardar el grafico de lineas, devuelve la ubicacion del archivo

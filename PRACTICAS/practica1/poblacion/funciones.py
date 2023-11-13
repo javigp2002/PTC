@@ -246,7 +246,7 @@ def get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_t
     array_dict = csv_to_array_dict(new_file, chars_to_keep, years_required)
 
     province_data = save_provinces_data_in_numpy(array_dict)
-    return provinces_data_to_autonomies_data(province_data, dict_autonomies_provinces()), array_dict
+    return provinces_data_to_autonomies_data(province_data, dict_autonomies_provinces())
 
 
 # funcion para pasar un float a una cadena con formato de moneda añadiendo los . de los miles y la , de los decimales
@@ -299,13 +299,14 @@ def numpy_autonomies_array_sort_by_mean(dt, number_of_autonomies, dict_autonomie
 def obtener_etiqueta_array_dict_for_graph(file, first_word, last_word, chars_to_keep,
                                           chars_to_keep_graph, years_required, years_poblation_graph, cabecera,
                                           number_of_autonomies):
-    dict_autonomies_graph, array_dict = get_dict_autonomies_with_provinces_data(file, first_word, last_word,
+    dict_autonomies_graph = get_dict_autonomies_with_provinces_data(file, first_word, last_word,
                                                                                 chars_to_keep_graph,
                                                                                 years_poblation_graph, cabecera)
 
     dt = np.dtype([('mean', np.float64), ('name', np.unicode_, 40)])
-    dict_autonomies, array_dict = get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_to_keep,
+    dict_autonomies = get_dict_autonomies_with_provinces_data(file, first_word, last_word, chars_to_keep,
                                                                           years_required, cabecera)
+
     array_autonomies_name_sorted = numpy_autonomies_array_sort_by_mean(dt, number_of_autonomies, dict_autonomies)
 
     return array_autonomies_name_sorted, dict_autonomies_graph
@@ -313,7 +314,7 @@ def obtener_etiqueta_array_dict_for_graph(file, first_word, last_word, chars_to_
 
 # funcion para incluir el gráfico en el html, para ello buscamo '</body>' y en la linea de antes incluimos el gráfico
 
-def include_graph_in_html(html, directorio_archivo):
+def include_graph_in_html(html, directorio_archivo, titulo_secundario):
     # buscamos la linea donde incluir el gráfico
     with open(html, "a+") as f:
         f.seek(0)  # cursor al principio
@@ -321,6 +322,5 @@ def include_graph_in_html(html, directorio_archivo):
         for line in f:
             if line.find("</body>") != -1:
                 # si encontramos la linea, escribimos el gráfico
-                f.write("<img src='" + directorio_archivo + "' alt='GrAfico de barras de la población por comunidades "
-                                                            "autonomas'>\n")
+                f.write("<img src='" + directorio_archivo + "' alt='" + titulo_secundario + "'>\n")
                 break

@@ -6,7 +6,7 @@ y relativa (hombres, mujeres). Para los cálculos, hay que actuar de manera seme
 """
 
 from funciones import write_cleaned_csv, \
-    write_html, DIRECTORIO_ENTRADAS, get_array_of_dict_keys, csv_to_array_dict, float_to_formated_cad, \
+    write_html, DIRECTORIO_ENTRADAS, get_array_of_dict_keys, float_to_formated_cad, \
     DIRECTORIO_RESULTADOS, get_dict_autonomies_with_provinces_data, variacion_absoluta, variacion_relativa
 
 # Variables globales para la lectura del css en R1
@@ -22,16 +22,17 @@ CABECERA = ("Provincia;T2017;T2016;T2015;T2014;T2013;T2012;T2011;T2010;H2017;H20
 
 YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010']
 
+FILE = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 SALIDAHTML = DIRECTORIO_RESULTADOS + "variacionComAutonomas.html"
 
 DECIMALS_TO_SHOW = 2
 
 
-def r4(file):
-    new_file = write_cleaned_csv(file, FIRST_WORD, LAST_WORD, CABECERA)
-    dict_comunities, array_dict = get_dict_autonomies_with_provinces_data(new_file, FIRST_WORD, LAST_WORD,
-                                                                          CHARS_TO_KEEP,
-                                                                          YEARS_REQUIRED, CABECERA)
+def r4():
+    new_file = write_cleaned_csv(FILE, FIRST_WORD, LAST_WORD, CABECERA)
+    dict_comunities = get_dict_autonomies_with_provinces_data(new_file, FIRST_WORD, LAST_WORD,
+                                                              CHARS_TO_KEEP,
+                                                              YEARS_REQUIRED, CABECERA)
 
     title = "Variaciones de la comunidades por sexos"
 
@@ -126,5 +127,4 @@ def cad_absolute_relative_autonomy(start, end, dict, array_names, autonomy, cad_
 
 
 # MAIN
-file = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
-r4(file)
+r4()
