@@ -25,7 +25,8 @@ YEARS_REQUIRED = ['2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010'
 FILE = DIRECTORIO_ENTRADAS + "poblacionProvinciasHM2010-17.csv"
 SALIDAHTML = DIRECTORIO_RESULTADOS + "variacionComAutonomas.html"
 
-DECIMALS_TO_SHOW = 2
+DECIMALS_TO_SHOW_ABSOLUTE = 0
+DECIMALS_TO_SHOW_RELATIVE = 2
 
 
 def r4():
@@ -120,8 +121,10 @@ def cad_absolute_relative_autonomy(start, end, dict, array_names, autonomy, cad_
         a = float(dict[array_names[autonomy]][i])
         b = float(dict[array_names[autonomy]][i + 1])
 
-        cad_absolute += "<td>" + float_to_formated_cad((variacion_absoluta(a, b), DECIMALS_TO_SHOW)) + "</td>\n"
-        cad_relative += ("<td>" + float_to_formated_cad(round(variacion_relativa(a, b), DECIMALS_TO_SHOW)) + "</td>\n")
+        cad_absolute += ("<td>" + float_to_formated_cad(variacion_absoluta(a, b), DECIMALS_TO_SHOW_ABSOLUTE)
+                         + "</td>\n")
+        cad_relative += ("<td>" + float_to_formated_cad(round(variacion_relativa(a, b), DECIMALS_TO_SHOW_RELATIVE))
+                         + "</td>\n")
 
     return cad_absolute, cad_relative
 
