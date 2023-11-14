@@ -54,11 +54,11 @@ def lineal_graph(x_ticks, dict_autonomies_graph, array_autonomies_name_sorted):
     plt.figure("lineal")
     plt.title("Población total en 2010-2017 (CCAA)")  # Establece el título del gráfico
     for autonomy in array_autonomies_name_sorted:
-        plt.plot(dict_autonomies_graph[autonomy][1::], marker="o", label=autonomy)
+        plt.plot(dict_autonomies_graph[autonomy][len(YEARS_POBLATION_GRAPH):1:-1], marker="o", label=autonomy)
 
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
-    plt.xticks(np.arange(len(YEARS_POBLATION_GRAPH)), YEARS_POBLATION_GRAPH)
+    plt.xticks(np.arange(len(YEARS_POBLATION_GRAPH)), YEARS_POBLATION_GRAPH[::-1])
     directorio_archivo = DIRECTORIO_IMAGENES + "R5.png"
     plt.savefig(DIRECTORIO_IMAGENES + 'R5.png', bbox_inches='tight')
 
