@@ -85,7 +85,7 @@ def dict_to_cad_html(dict):
 
     num_years = int(dict[array_names[0]].size)
     for autonomy in range(0, len(array_names)):
-        cad += "<tr> <td>" + array_names[autonomy] + "</td>\n"
+        cad += "<tr> <td><strong>" + array_names[autonomy] + "</strong></td>\n"
 
         cad_absolute = ""
         cad_relative = ""

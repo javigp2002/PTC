@@ -77,7 +77,7 @@ def dict_to_cad_html(array_dict):
 
     # recorremos el array de diccionarios y vamos escribiendo la cadena
     for actual_dict in array_dict:
-        cad += "<tr> <td>" + actual_dict[array_names[0]] + "</td>\n"
+        cad += "<tr> <td> <strong>" + actual_dict[array_names[0]] + "</strong></td>\n"
         cad_relative = ""
 
         num_variations = len(array_names) - 1  # -1 para no coger el ultimo elemento que es el total
