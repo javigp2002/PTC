@@ -1,0 +1,58 @@
+from tkinter import *
+
+root = Tk()
+root.geometry("700x300")
+
+# First Column
+r=0
+label1 = Label(root, text="Es necesario ejectuar el simulador VREP")
+label1.grid(row=0, column=0 )
+r+=1
+
+b_connect_vrep = Button(root, text="Conectar con VREP")
+b_connect_vrep.grid(row=1, column=0)
+
+b_stop_disconnect_vrep = Button(root, text="Detener y desconectar VREP")
+b_connect_vrep.grid(row=2, column=0)
+
+l_estado = Label(root, text="Estado: No conectado a VREP")
+l_estado.grid(row=3, column=0)
+
+b_capturar = Label(root, text="Capturar")
+b_capturar.grid(row=4, column=0)
+
+b_agrupar = Label(root, text="Agrupar")
+b_agrupar.grid(row=5, column=0)
+
+b_extraer = Label(root, text="Extraer características")
+b_extraer.grid(row=6, column=0)
+
+b_entrenar = Label(root, text="Entrenar clasificador")
+b_entrenar.grid(row=7, column=0)
+
+b_predecir = Label(root, text="Precedir")
+b_predecir.grid(row=8, column=0)
+
+b_salir = Label(root, text="Salir")
+b_salir.grid(row=9, column=0)
+
+
+# Second Column
+for i in range(7):
+    label = Label(root, text=f"Label {i+1}")
+    label.grid(row=i, column=1
+
+button2 = Button(root, text="Button")
+button2.grid(row=7, column=1)
+
+# Third Column
+
+
+# Configure column widths
+root.grid_columnconfigure(0, weight=1, uniform="columns")
+root.grid_columnconfigure(1, weight=1, uniform="columns")
+root.grid_columnconfigure(2, weight=1, uniform="columns")
+
+root.mainloop()
+
+    

@@ -1,0 +1,43 @@
+from tkinter import *
+
+
+
+root = Tk()
+root.geometry("700x300")
+
+def create_button(button, text_button, r, c):
+    button = Button(root, text=text_button)
+    button.grid(row=r, column=c)
+# First Column
+r=0
+label1 = Label(root, text="Es necesario ejectuar el simulador VREP")
+label1.grid(row=0, column=0 )
+r+=1
+
+create_button(b_connect_vrep, "Conectar con VREP", r, 0)
+
+r+=1
+
+b_stop_disconnect_vrep = Button(root, text="Detener y desconectar VREP")
+b_connect_vrep.grid(row=r, column=0)
+r+=1
+
+l_estado = Label(root, text="Estado: No conectado a VREP")
+l_estado.grid(row=r, column=0)
+
+for i in range(8):
+    button = Button(root, text=f"Button {i+1}")
+    button.grid(row=i+2, column=0)
+
+# Second Column
+for i in range(7):
+    label = Label(root, text=f"Label {i+1}")
+    label.grid(row=i, column=1
+
+
+# Third Column
+
+
+root.mainloop()
+
+    

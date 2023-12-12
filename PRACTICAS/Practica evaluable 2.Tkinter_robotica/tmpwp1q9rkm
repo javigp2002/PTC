@@ -1,0 +1,40 @@
+from tkinter import *
+
+root = Tk()
+root.geometry("700x300")
+
+# First Column
+r=0
+label1 = Label(root, text="Es necesario ejectuar el simulador VREP")
+label1.grid(row=0, column=0 )
+r+=1
+
+button = Button(root, text="Conectar con VREP")
+button.grid(row=r, column=0)
+
+label2 = Label(root, text="Label 2")
+label2.grid(row=1, column=0)
+
+for i in range(8):
+    button = Button(root, text=f"Button {i+1}")
+    button.grid(row=i+2, column=0)
+
+# Second Column
+for i in range(7):
+    label = Label(root, text=f"Label {i+1}")
+    label.grid(row=i, column=1
+
+button2 = Button(root, text="Button")
+button2.grid(row=7, column=1)
+
+# Third Column
+
+
+# Configure column widths
+root.grid_columnconfigure(0, weight=1, uniform="columns")
+root.grid_columnconfigure(1, weight=1, uniform="columns")
+root.grid_columnconfigure(2, weight=1, uniform="columns")
+
+root.mainloop()
+
+    
