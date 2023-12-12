@@ -3,3 +3,6 @@ vdi
 .vscode
 
 
+dirLectura*
+__pycache__
+
