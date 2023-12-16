@@ -5,6 +5,7 @@ import globals
 import capturar
 from agrupar import agrupar
 from caracteristicas import caracteristicas
+from clasificarSVM import entrenar_clasificador
 
 global raiz
 
@@ -91,6 +92,9 @@ def main():
         caracteristicas()
         messagebox.showinfo("Extracción de características", "Extracción de características finalizada")
 
+    def entrenar_clasif():
+        entrenar_clasificador()
+        messagebox.showinfo("Entrenamiento", "Entrenamiento finalizado")
     def toggle_debug_mode():
         globals.debug_mode = not globals.debug_mode
         if globals.debug_mode:
@@ -143,7 +147,7 @@ def main():
     b_extraer.grid(row=r, column=0)
 
     r += 1
-    b_entrenar = Button(root, text="Entrenar clasificador", state=DISABLED)
+    b_entrenar = Button(root, text="Entrenar clasificador", state=DISABLED, command=entrenar_clasif)
     b_entrenar.grid(row=r, column=0)
 
     r += 1
