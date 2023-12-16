@@ -8,7 +8,7 @@ import globals
 
 dat_piernas = "piernasDataset.dat"
 dat_no_piernas = "noPiernasDataset.dat"
-csv_piernas = 'piernasDataset.csv'
+csv_piernas = globals.piernasDataset
 
 
 def euclidean_distance(point1, point2):

@@ -19,6 +19,7 @@ puntosX = "puntosX"
 puntosY = "puntosY"
 piernas_json = "clustersPiernas.json"
 no_piernas_json = "clustersNoPiernas.json"
+piernasDataset = "piernasDataset.csv"
 
 debug_mode = False
 clientId = -1
