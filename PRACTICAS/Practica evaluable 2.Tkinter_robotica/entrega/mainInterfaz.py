@@ -2,17 +2,20 @@ import os.path
 from tkinter import *
 from accion_botones import *
 import globals
+import capturar
+from agrupar import agrupar
+from caracteristicas import caracteristicas
 
 global raiz
 
 
+
 def main():
-    debug_mode = False
 
     def connect_to_vrep():
-        clientId = get_client_id_vrep()
+        get_client_id_vrep()
 
-        if clientId != -1:
+        if globals.clientId != -1:
             l_estado.config(text="Estado: Conectado a VREP")
             b_stop_disconnect_vrep.config(state=NORMAL)
             b_capturar.config(state=NORMAL)
@@ -28,7 +31,7 @@ def main():
 
     def upload():
         global raiz
-        
+
         globals.iteraciones_str = str(iteraciones.get())
         globals.cerca_str = str(cerca.get())
         globals.media_str = str(media.get())
@@ -52,44 +55,45 @@ def main():
         Label(ventana, text="UmbralDistancia: " + str(globals.umbral_distancia_str)).pack()
 
     def capture():
-        selection = ficheros.curselection()
-        if not selection:
+        file = ficheros.get(ANCHOR)
+        if not file:
             messagebox.showwarning(message="Debe elegir un fichero de la lista")
-
-        # si se ha elegido un fichero comprobamos que existe o creamos uno nuevo
-        file = ficheros.get(selection(0))
-        directory = os.path.dirname(file)
-
-        if not os.path.isdir(directory):
-            os.makedirs(directory)
-
-        if os.path.exists(file):
-            answer = messagebox.askyesno(message="El fichero ya existe, ¿desea sobreescribirlo?")
-            if answer:
-                os.remove(file)
         else:
-            answer = messagebox.askyesno(message="El fichero no existe, ¿desea crearlo?")
+            # si se ha elegido un fichero comprobamos que existe o creamos uno nuevo
+            directory = os.path.dirname(file)
 
-        if answer:
-            with open(file, "w") as f:
-                f.close("")
+            if not os.path.isdir(directory):
+                os.makedirs(directory)
 
-        ## TODO
-        # LLAMAR CAPTURAR.PY
-        ##
+            if os.path.exists(file):
+                answer = messagebox.askyesno(message="El fichero ya existe, ¿desea sobreescribirlo?")
+                if answer:
+                    os.remove(file)
+                else:
+                    return
+            else:
+                answer = messagebox.askyesno(message="El fichero no existe, ¿desea crearlo?")
 
-        b_agrupar.config(state=NORMAL)
+            if answer:
+                with open(file, "w") as f:
+                    f.close()
+
+            capturar.main(file)
+
+            b_agrupar.config(state=NORMAL)
 
     def group():
-        ## TODO LLAMAR A AGRUPAR.PY
+        agrupar()
         ##
         b_extraer.config(state=NORMAL)
 
+    def extract_caracteristics():
+        caracteristicas()
+        messagebox.showinfo("Extracción de características", "Extracción de características finalizada")
 
     def toggle_debug_mode():
-        global debug_mode
-        debug_mode = not debug_mode
-        if debug_mode:
+        globals.debug_mode = not globals.debug_mode
+        if globals.debug_mode:
             # Habilitar los botones b_
             b_stop_disconnect_vrep.config(state=NORMAL)
             b_capturar.config(state=NORMAL)
@@ -135,7 +139,7 @@ def main():
     b_agrupar.grid(row=r, column=0)
 
     r += 1
-    b_extraer = Button(root, text="Extraer características", state=DISABLED)
+    b_extraer = Button(root, text="Extraer características", state=DISABLED, command=extract_caracteristics)
     b_extraer.grid(row=r, column=0)
 
     r += 1
