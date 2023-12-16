@@ -62,8 +62,10 @@ def caracteristics_to_dat(saved_json, dat_file, piernas):
 
     for cluster in clusters:
         puntos = []
-        for punto in cluster[globals.puntosX]:
-            puntos.append((punto[globals.puntosX], punto[globals.puntosY]))
+        for i in range(len(cluster["puntosX"])):
+            x = cluster["puntosX"][i]
+            y = cluster["puntosY"][i]
+            puntos.append([x, y])
 
         # calculamos la distancia euclidea entre los puntos
         perimetro = calculate_perimeter(puntos)
