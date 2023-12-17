@@ -120,10 +120,11 @@ def main(file):
 
         # Situamos donde queremos a la persona
         # pos será el valor entre la distance maxima y la distancia minima según la iteración
-        posX = random.uniform(distance_min, distance_max)
+        #posX = random.uniform(distance_min, distance_max)
+        posX = distance_min + (distance_max - distance_min) * (iteracion - 1) / (maxIter - 1)
 
         # calcula la posición en y para que no se salga del radio de 90
-        cateto_opuesto = (math.tan(math.pi / 4) * posX)
+        cateto_opuesto = (math.tan(math.pi / 6) * posX)
 
         posY = random.uniform(-cateto_opuesto, cateto_opuesto)
 
