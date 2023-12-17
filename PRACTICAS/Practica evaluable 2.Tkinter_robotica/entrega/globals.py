@@ -21,7 +21,9 @@ piernas_json = "clustersPiernas.json"
 no_piernas_json = "clustersNoPiernas.json"
 piernasDataset = "piernasDataset.csv"
 
-clasificador_pkl = "clasificador.pkl"
+clasificador_pkl = "clasificador_entrega.pkl"
+num_cluster=0
+
 
 debug_mode = False
 clientId = -1
