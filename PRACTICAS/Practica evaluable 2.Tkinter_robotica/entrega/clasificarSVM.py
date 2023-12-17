@@ -43,6 +43,8 @@ def entrenar_segun_clasificador(X, y, svclassifier, svc_cross_validation):
     scores = cross_val_score(svc_cross_validation, X, y, cv=5)
     print("Accuracy 5-cross validation: %0.4f (+/- %0.4f)" % (scores.mean(), scores.std() * 2))
 
+    return svclassifier
+
     # Realizamos la predicción
 
 
@@ -58,36 +60,34 @@ def entrenar_clasificador():
 
     dataset = pd.read_csv(globals.piernasDataset, names=colnames)
 
-
     # Separamos las características de las etiquetas
     X = dataset.drop('esPierna', axis=1)
     y = dataset['esPierna']
 
-    entrenar_segun_clasificador(X, y, SVC(kernel='linear'), SVC(kernel='linear'))
-    entrenar_segun_clasificador(X, y, SVC(kernel='poly', degree=grado_kernel_pol), SVC(kernel='poly', degree=grado_kernel_pol))
-    entrenar_segun_clasificador(X, y, SVC(kernel='rbf'), SVC(kernel='rbf'))
+    clas_linear = entrenar_segun_clasificador(X, y, SVC(kernel='linear'), SVC(kernel='linear'))
+    clas_poly = entrenar_segun_clasificador(X, y, SVC(kernel='poly', degree=grado_kernel_pol),
+                                            SVC(kernel='poly', degree=grado_kernel_pol))
+    clas_rbf = entrenar_segun_clasificador(X, y, SVC(kernel='rbf'), SVC(kernel='rbf'))
 
     #######################
     # Kernel radial
     #######################
 
-
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=25)
-
 
     print("Búsqueda de parámetros en un rango en el caso de RBF")
 
-    param_grid={'C':[1,10,100,1000],
-                'gamma': [0.001, 0.005, 0.01, 0.1]}
+    param_grid = {'C': [1, 10, 100, 1000],
+                  'gamma': [0.001, 0.005, 0.01, 0.1]}
 
-    clf=GridSearchCV(SVC(kernel='rbf'), param_grid)
+    clf = GridSearchCV(SVC(kernel='rbf'), param_grid)
 
-    clf=clf.fit(X_train, y_train)
+    clf = clf.fit(X_train, y_train)
     print("Mejor estimador encontrado")
 
     print(clf.best_estimator_)
 
-    mejorSVC=clf.best_estimator_
+    mejorSVC = clf.best_estimator_
 
     y_pred = mejorSVC.predict(X_test)
     acc_test = accuracy_score(y_test, y_pred)
@@ -110,5 +110,3 @@ def entrenar_clasificador():
     # Guardamos el modelo
     with open(globals.clasificador_pkl, "wb") as archivo:
         pickle.dump(mejorSVC, archivo)
-
-
