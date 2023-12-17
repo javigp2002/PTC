@@ -91,15 +91,17 @@ def eliminar_ficheros():
     if os.path.exists(csv_piernas):
         os.remove(csv_piernas)
 
+    print("Borrando ficheros: ", dat_piernas, dat_no_piernas, csv_piernas)
+
 
 def dat_to_csv(all_caracteristicas):
     with open(csv_piernas, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
 
         for caracteristica in all_caracteristicas:
-            writer.writerow([format(caracteristica['perimetro'], '.2f'),
-                             format(caracteristica['anchura'], '.2f'),
-                             format(caracteristica['profundidad'], '.2f'),
+            writer.writerow([format(caracteristica['perimetro'], '.4f'),
+                             format(caracteristica['anchura'], '.4f'),
+                             format(caracteristica['profundidad'], '.4f'),
                              caracteristica['esPierna']]
                             )
 
@@ -107,16 +109,16 @@ def dat_to_csv(all_caracteristicas):
 def caracteristicas():
     eliminar_ficheros()
 
-    caracteristics_to_dat(globals.piernas_json, dat_piernas, 1)
     caracteristics_to_dat(globals.no_piernas_json, dat_no_piernas, 0)
+    caracteristics_to_dat(globals.piernas_json, dat_piernas, 1)
 
     # convertimos los ficheros .dat a .csv
     all_caracteristics = []
-    with open(dat_piernas, "r") as f:
+    with open(dat_no_piernas, "r") as f:
         for line in f:
             all_caracteristics.append(json.loads(line))
 
-    with open(dat_no_piernas, "r") as f:
+    with open(dat_piernas, "r") as f:
         for line in f:
             all_caracteristics.append(json.loads(line))
 
