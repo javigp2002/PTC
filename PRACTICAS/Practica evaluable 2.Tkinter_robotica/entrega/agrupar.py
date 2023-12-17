@@ -23,6 +23,50 @@ def are_points_distanced(point1, point2):
     return distancia_puntos <= float(globals.umbral_distancia_str)
 
 
+def group_in_clusters(puntos_x, puntos_y):
+    cluster = []
+    clusters = []
+
+    # recorremos los puntos de la iteracion
+    for j in range(len(puntos_x)):
+        # si es el primer punto lo añadimos al cluster
+        if j == 0:
+            cluster.append([puntos_x[j], puntos_y[j]])
+        else:
+            # si el punto está a una distancia menor al umbral lo añadimos al cluster
+            if are_points_distanced(cluster[-1], [puntos_x[j], puntos_y[j]]):
+                cluster.append([puntos_x[j], puntos_y[j]])
+            else:
+                # Si ha terminado el grupo de puntos entonces comprobar que es válido el cluster
+                if int(globals.min_puntos_str) <= len(cluster) <= int(globals.max_puntos_str):
+                    clusters.append(cluster)
+
+                # reiniciar grupo de puntos
+                cluster = [[puntos_x[j], puntos_y[j]]]
+
+    # añadimos el ultimo cluster
+    if int(globals.min_puntos_str) <= len(cluster) <= int(globals.max_puntos_str):
+        clusters.append(cluster)
+
+    return clusters
+
+
+def save_clusters(clusters, saved_json):
+    for cluster_index in range(len(clusters)):
+        cluster_dict = {
+            "numero_cluster": globals.num_cluster,
+            "numero_puntos": len(clusters[cluster_index]),
+            globals.puntosX: [punto[0] for punto in clusters[cluster_index]],
+            globals.puntosY: [punto[1] for punto in clusters[cluster_index]]
+        }
+
+        globals.num_cluster += 1
+
+        # guardamos el cluster en el fichero
+        with open(saved_json, "a") as f:
+            f.write(json.dumps(cluster_dict) + '\n')
+
+
 def agrupar_by_directories(num_dir_lecturas, lista, saved_json):
     directorio_inicial = os.getcwd()
     # si existe saved_json lo borramos
@@ -30,12 +74,14 @@ def agrupar_by_directories(num_dir_lecturas, lista, saved_json):
         os.remove(saved_json)
         print("Borrando el fichero: ", saved_json)
 
-    num_cluster = 0;
+    globals.num_cluster = 0
+
     for i in range(num_dir_lecturas):
         os.chdir(lista[i])
-        #print("Cambiando el directorio de trabajo a: ", os.getcwd())
+        # print("Cambiando el directorio de trabajo a: ", os.getcwd())
         file = glob.glob("*.json")
         objetos = []
+
 
         # abrimos el fichero de laser
 
@@ -58,67 +104,24 @@ def agrupar_by_directories(num_dir_lecturas, lista, saved_json):
         plt.axis('equal')
         plt.axis([0, 4, -2, 2])
 
-        clusters = []
-        cluster = []
-
         # volvemos para que los clusters se guarden en el directorio inicial
         os.chdir(directorio_inicial)
 
         # recorremos las lineas del fichero
-        for i in range(iteracion_total):
+        for j in range(iteracion_total):
+            puntos_x = objetos[j + 1]["PuntosX"]
+            puntos_y = objetos[j + 1]["PuntosY"]
 
-            iteracion = objetos[i + 1]['Iteracion']
-            puntos_x = objetos[i + 1]["PuntosX"]
-            puntos_y = objetos[i + 1]["PuntosY"]
+            clusters = group_in_clusters(puntos_x, puntos_y)
 
-            # print("Iteración: ", iteracion, " de ", iteracion_total)
+            save_clusters(clusters, saved_json)
 
-            # plt.clf()
-            # plt.plot(puntos_x, puntos_y, 'r.')
-            # plt.show()
+            if (len(clusters) < 1):
 
-            # recorremos los puntos de la iteracion
-            for j in range(len(puntos_x)):
-                # si es el primer punto lo añadimos al cluster
-                if j == 0:
-                    cluster.append([puntos_x[j], puntos_y[j]])
-                else:
-                    # si el punto está a una distancia menor al umbral lo añadimos al cluster
-                    if are_points_distanced(cluster[-1], [puntos_x[j], puntos_y[j]]):
-                        cluster.append([puntos_x[j], puntos_y[j]])
-                    else:
-                        # Si ha terminado el grupo de puntos entonces comprobar que es válido el cluster
-                        if int(globals.min_puntos_str) <= len(cluster) <= int(globals.max_puntos_str):
-                            clusters.append(cluster)
-
-                        # reiniciar grupo de puntos
-                        cluster = [[puntos_x[j], puntos_y[j]]]
-
-            # añadimos el ultimo cluster
-            if int(globals.min_puntos_str) <= len(cluster) <= int(globals.max_puntos_str):
-                clusters.append(cluster)
-
-            for cluster_index in range(len(clusters)):
-
-                cluster_dict = {
-                    "numero_cluster": num_cluster,
-                    "numero_puntos": len(clusters[cluster_index]),
-                    globals.puntosX: [punto[0] for punto in clusters[cluster_index]],
-                    globals.puntosY: [punto[1] for punto in clusters[cluster_index]]
-                }
-
-                num_cluster += 1
-
-                # guardamos el cluster en el fichero
-                with open(saved_json, "a") as f:
-                    f.write(json.dumps(cluster_dict) + '\n')
-            print("clusters añadidos: ", len(clusters), " en la iteracion: ", iteracion)
-            clusters = []
-            cluster = []
-
-    print ("fin de agrupar_by_directories")
+                print(lista[i], ": No hay clusters en la iteracion: ", j)
 
 
+    print("fin de agrupar_by_directories")
 
 
 def agrupar():
