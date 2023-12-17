@@ -6,6 +6,7 @@ import capturar
 from agrupar import agrupar
 from caracteristicas import caracteristicas
 from clasificarSVM import entrenar_clasificador
+from predecir import predecir
 
 global raiz
 
@@ -95,6 +96,11 @@ def main():
     def entrenar_clasif():
         entrenar_clasificador()
         messagebox.showinfo("Entrenamiento", "Entrenamiento finalizado")
+
+    def predict():
+        predecir()
+        messagebox.showinfo("Predicción", "Predicción finalizada")
+
     def toggle_debug_mode():
         globals.debug_mode = not globals.debug_mode
         if globals.debug_mode:
@@ -151,7 +157,7 @@ def main():
     b_entrenar.grid(row=r, column=0)
 
     r += 1
-    b_predecir = Button(root, text="Predecir", state=DISABLED)
+    b_predecir = Button(root, text="Predecir", state=DISABLED, command=predict)
     b_predecir.grid(row=r, column=0)
 
     r += 1
