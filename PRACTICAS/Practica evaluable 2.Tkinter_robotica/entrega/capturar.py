@@ -27,6 +27,7 @@ persona_sentada = "Bill"
 cilindro_pequeño = "Cylinder"
 cilindro_grande = "Cylinder6"
 
+
 def main(file):
     clientID = globals.clientId
 
@@ -55,19 +56,16 @@ def main(file):
     print("Directorio de trabajo es: ", os.getcwd())
     directorio_inicial = os.getcwd()
 
-
     directorio = file.split("/")[0]
     nombreFichero = file.split("/")[1]
     f = open(file, "w")
     f.close()
-
 
     if not os.path.isdir(directorio):
         os.mkdir(directorio)
 
     os.chdir(directorio)
     print("Cambiando el directorio de trabajo: ", os.getcwd())
-
 
     # Creamos el fichero JSON para guardar los datos del laser
     # usamos diccionarios
@@ -80,7 +78,6 @@ def main(file):
 
     ficheroLaser = open(nombreFichero, "w")
 
-
     _, personhandle = vrep.simxGetObjectHandle(clientID, persona_sentada, vrep.simx_opmode_oneshot_wait)
     # si no es sentado entonces será de pie
     if "positivo" in directorio:
@@ -92,9 +89,7 @@ def main(file):
         else:
             _, personhandle = vrep.simxGetObjectHandle(clientID, cilindro_grande, vrep.simx_opmode_oneshot_wait)
 
-    print ("Persona: ", personhandle)
-
-
+    print("Persona: ", personhandle)
 
     nombreFicheroSinExtension = nombreFichero.split(".")[0]
     # Según como lo hemos escrito hay que diferenciar la distancia que quermeos seleccionar
@@ -108,30 +103,45 @@ def main(file):
         distance_max = float(globals.lejos_str)
     elif nombreFicheroSinExtension[-5:] == "Lejos":
         distance_min = float(globals.lejos_str)
-        distance_max = float(globals.lejos_str)+1
+        distance_max = float(globals.lejos_str) + 1
     else:
         sys.exit("Error: el nombre del fichero no es correcto")
 
     ficheroLaser.write(json.dumps(cabecera) + '\n')
 
+    iters_por_y = 10
+    iter_por_x = (round(int(maxIter) / iters_por_y))
+    dist_x_por_iter = (distance_max - distance_min) / iter_por_x
+    posX = distance_min
+
     seguir = True
 
-    while (iteracion <= maxIter and seguir):
+    while iteracion <= maxIter and seguir:
 
         # Situamos donde queremos a la persona
         # pos será el valor entre la distance maxima y la distancia minima según la iteración
-        #posX = random.uniform(distance_min, distance_max)
-        posX = distance_min + (distance_max - distance_min) * (iteracion - 1) / (maxIter - 1)
+        # posX = random.uniform(distance_min, distance_max)
+        posX = distance_min + dist_x_por_iter * ((iteracion - 1) // iters_por_y)
 
         # calcula la posición en y para que no se salga del radio de 90
-        cateto_opuesto = (math.tan(math.pi / 6) * posX)
+        cateto_opuesto = (math.tan(math.pi / 4) * posX)
 
-        posY = random.uniform(-cateto_opuesto, cateto_opuesto)
+
+
+        # la posicion de y será uniforme desde -cateto_opuesto hasta cateto_opuesto según la iteración
+        distance_por_y = cateto_opuesto * 2 / iters_por_y
+        posY = -cateto_opuesto + distance_por_y * ((iteracion - 1) % iters_por_y)
+
 
         returnCode = vrep.simxSetObjectPosition(clientID, personhandle, -1, [posX, posY, 0.0],
                                                 vrep.simx_opmode_oneshot)
+
+        rotation = [0.0, 0.0, (math.pi)/4 * iteracion]
+        if "cilindroMayorCerca" in nombreFichero:
+            rotation = [0.0, 0.0, 0.0]
+
         # Cambiamos la orientacion, ojo está en radianes: Para pasar de grados a radianes hay que multiplicar por PI y dividir por 180
-        returnCode = vrep.simxSetObjectOrientation(clientID, personhandle, -1, [0.0, 0.0, 3.05 - (0.20) * iteracion],
+        returnCode = vrep.simxSetObjectOrientation(clientID, personhandle, -1, rotation,
                                                    vrep.simx_opmode_oneshot)
 
         time.sleep(segundos)  # esperamos un tiempo para que el ciclo de lectura de datos no sea muy rápido
@@ -149,12 +159,11 @@ def main(file):
 
         print("Iteración: ", iteracion)
 
-
         # Guardamos los puntosx, puntosy en el fichero JSON
         #        lectura = {"Iteracion": iteracion, "PuntosX: puntosx, "PuntosY": puntosy}
         lectura = {"Iteracion": iteracion, "PuntosX": puntosx, "PuntosY": puntosy}
 
-        #lectura = {"Iteracion": iteracion, globals.puntosX: puntosx, globals.puntosY: puntosy}
+        # lectura = {"Iteracion": iteracion, globals.puntosX: puntosx, globals.puntosY: puntosy}
         # ficheroLaser.write('{}\n'.format(json.dumps(lectura)))
         ficheroLaser.write(json.dumps(lectura) + '\n')
 

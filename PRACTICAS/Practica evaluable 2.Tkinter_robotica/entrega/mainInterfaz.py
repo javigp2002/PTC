@@ -91,15 +91,18 @@ def main():
 
     def extract_caracteristics():
         caracteristicas()
-        messagebox.showinfo("Extracción de características", "Extracción de características finalizada")
+        #messagebox.showinfo("Extracción de características", "Extracción de características finalizada")
 
     def entrenar_clasif():
         entrenar_clasificador()
-        messagebox.showinfo("Entrenamiento", "Entrenamiento finalizado")
+        #messagebox.showinfo("Entrenamiento", "Entrenamiento finalizado")
 
     def predict():
-        predecir()
-        messagebox.showinfo("Predicción", "Predicción finalizada")
+        if globals.clientId != -1:
+            predecir()
+            #messagebox.showinfo("Predicción", "Predicción finalizada")
+        else:
+            messagebox.showerror("Predicción", "Debe conectarse a VREP")
 
     def toggle_debug_mode():
         globals.debug_mode = not globals.debug_mode

@@ -43,7 +43,7 @@ def entrenar_segun_clasificador(X, y, svclassifier, svc_cross_validation):
     scores = cross_val_score(svc_cross_validation, X, y, cv=5)
     print("Accuracy 5-cross validation: %0.4f (+/- %0.4f)" % (scores.mean(), scores.std() * 2))
 
-    return svclassifier
+    return svclassifier, scores
 
     # Realizamos la predicción
 
@@ -64,10 +64,11 @@ def entrenar_clasificador():
     X = dataset.drop('esPierna', axis=1)
     y = dataset['esPierna']
 
-    clas_linear = entrenar_segun_clasificador(X, y, SVC(kernel='linear'), SVC(kernel='linear'))
-    clas_poly = entrenar_segun_clasificador(X, y, SVC(kernel='poly', degree=grado_kernel_pol),
+    clas_linear, score_linear = entrenar_segun_clasificador(X, y, SVC(kernel='linear'), SVC(kernel='linear'))
+    clas_poly,score_poly = entrenar_segun_clasificador(X, y, SVC(kernel='poly', degree=grado_kernel_pol),
                                             SVC(kernel='poly', degree=grado_kernel_pol))
-    clas_rbf = entrenar_segun_clasificador(X, y, SVC(kernel='rbf'), SVC(kernel='rbf'))
+    clas_rbf, score_rbf = entrenar_segun_clasificador(X, y, SVC(kernel='rbf'), SVC(kernel='rbf'))
+
 
     #######################
     # Kernel radial
@@ -78,9 +79,9 @@ def entrenar_clasificador():
     print("Búsqueda de parámetros en un rango en el caso de RBF")
 
     param_grid = {'C': [1, 10, 100, 1000],
-                  'gamma': [0.001, 0.005, 0.01, 0.1]}
+                  'gamma': [0.001, 0.005, 0.01, 0.1, 1, 10, 100]}
 
-    clf = GridSearchCV(SVC(kernel='rbf'), param_grid)
+    clf = GridSearchCV(SVC(kernel='rbf', class_weight="balanced"), param_grid)
 
     clf = clf.fit(X_train, y_train)
     print("Mejor estimador encontrado")
@@ -102,7 +103,7 @@ def entrenar_clasificador():
 
     # Cross validation
     print("Cross validation")
-    svcRadial2 = SVC(kernel='rbf')
+    svcRadial2 = SVC(kernel='rbf', C=mejorSVC.C, gamma=mejorSVC.gamma, class_weight="balanced")
     scores = cross_val_score(svcRadial2, X, y, cv=5)
 
     print("Accuracy 5-cross validation: %0.4f (+/- %0.4f)" % (scores.mean(), scores.std() * 2))

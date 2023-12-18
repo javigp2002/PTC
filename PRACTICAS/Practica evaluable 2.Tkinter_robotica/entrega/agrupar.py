@@ -119,6 +119,8 @@ def agrupar_by_directories(num_dir_lecturas, lista, saved_json):
             if (len(clusters) < 1):
 
                 print(lista[i], ": No hay clusters en la iteracion: ", j)
+            elif (len(clusters)> 2):
+                print(lista[i], ": Hay mas de dos clusters en la iteracion: ", j)
 
 
     print("fin de agrupar_by_directories")

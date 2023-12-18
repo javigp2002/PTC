@@ -30,6 +30,21 @@ from sklearn.model_selection import ShuffleSplit
 import agrupar
 import caracteristicas
 
+def distance_between_clusters(points1, points2):
+    for point in points1:
+        for point2 in points2:
+            distance = math.sqrt((point[0] - point2[0]) ** 2 + (point[1] - point2[1]) ** 2)
+            if distance < 0.2:
+                return True
+
+def calculate_centroide(points):
+    x = 0
+    y = 0
+    for point in points:
+        x += point[0]
+        y += point[1]
+    return [x / len(points), y / len(points)]
+
 
 def recibir_datos_laser():
     clientID = globals.clientId
@@ -122,7 +137,7 @@ def predecir():
 
     plt.clf()
     plt.axis('tight')
-    plt.axis([1, 3.6, -2, 2])
+    plt.axis([1, 3.6, -2.4, 2.4])
 
     for i in range(len(df)):
         puntos = clusters[i]
@@ -134,6 +149,20 @@ def predecir():
 
         for j in range(len(puntos)):
             plt.plot(puntos[j][0], puntos[j][1], color)
+
+        ## comparamos con los siguientes cluster si la distancia entre ellos es menor que 0.5
+        for j in range(i + 1, len(df)):
+            puntos2 = clusters[j]
+            if distance_between_clusters(puntos, puntos2):
+                # calcular centroide de los dos clusters
+                centroide_a = calculate_centroide(puntos)
+                centroide_b = calculate_centroide(puntos2)
+
+                # punto medio de los segmentos
+                x = (centroide_a[0] + centroide_b[0]) / 2
+                y = (centroide_a[1] + centroide_b[1]) / 2
+
+                plt.plot(x, y, 'g. ')
 
     plt.savefig('prediccion.jpg')
     os.chdir(directorio_inicial)

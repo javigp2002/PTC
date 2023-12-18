@@ -32,25 +32,28 @@ def calculate_perimeter(points):
 def calculate_depth(points):
     # calculamos la recta P1Pn
     p1 = points[0]
-    pn = points[len(points) - 1]
+    pn = points[-1]
 
     A = pn[1] - p1[1]
-    B = p1[0] - pn[0]
+    B = pn[0] - p1[0]
     C = pn[0] * p1[1] - pn[1] * p1[0]
 
     # calculamos la distancia de cada punto a la recta
     max_distance = 0
 
-    for i in range(1, len(points) - 1):
-        denominator = math.sqrt(A ** 2 + B ** 2)
+    distances = []
+    distances.append(0)
+    denominator = math.sqrt(A ** 2 + B ** 2)
+
+    for i in range(0, len(points) - 1):
         if denominator != 0:
-            distance = abs(A * points[i][0] - B * points[i][1] + C) / denominator
+            numerator = abs(A * points[i][0] - B * points[i][1] + C)
+            distance = numerator / denominator
         else:
             distance = 0
 
-        if distance > max_distance:
-            max_distance = distance
-    return max_distance
+        distances.append(distance)
+    return max(distances)
 
 
 def caracteristics_to_dat(saved_json, dat_file, piernas):
