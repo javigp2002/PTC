@@ -13,6 +13,13 @@ global raiz
 
 
 def main():
+    # crear carpetas si no existen
+    carpetas = ["positivo1", "positivo2", "positivo3", "positivo4", "positivo5", "positivo6",
+                "negativo1", "negativo2", "negativo3", "negativo4", "negativo5", "negativo6", "prediccion"]
+
+    for carpeta in carpetas:
+        if not os.path.exists(carpeta):
+            os.mkdir(carpeta)
 
     def connect_to_vrep():
         get_client_id_vrep()
@@ -92,10 +99,12 @@ def main():
     def extract_caracteristics():
         caracteristicas()
         #messagebox.showinfo("Extracción de características", "Extracción de características finalizada")
+        b_entrenar.config(state=NORMAL)
 
     def entrenar_clasif():
         entrenar_clasificador()
         #messagebox.showinfo("Entrenamiento", "Entrenamiento finalizado")
+        b_predecir.config(state=NORMAL)
 
     def predict():
         if globals.clientId != -1:
